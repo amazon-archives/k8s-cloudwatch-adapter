@@ -8,13 +8,15 @@ This adapter allows you to scale your Kubernetes deployment using the [Horizonta
 Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) (HPA) with
 metrics from AWS CloudWatch.
 
-** This project is currently in Alpha status, use at your own risk. **
+**This project is currently in Alpha status, use at your own risk.**
 
 ## Deploy
 Requires a Kubernetes cluster with Metric Server deployed, Amazon EKS cluster is fine too.
 
-Create a config for the adapter. Below is a sample for a custom metric named `sqslength` that is
-getting the average for SQS metric `ApproximateNumberOfMessagesVisible`.
+Create a config for the adapter. This config is very much similar to the query structure used by
+[CloudWatch GetMetricData API](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricData.html).
+Below is a sample for a custom metric named `sqslength` that is getting the average for SQS metric
+`ApproximateNumberOfMessagesVisible`.
 
 ```yaml
 series:
