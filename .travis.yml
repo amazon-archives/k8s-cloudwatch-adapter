@@ -7,7 +7,7 @@ go:
 git:
   depth: 1
 
-script: make
+script: make test docker-build
 
 sudo: required
 services:
