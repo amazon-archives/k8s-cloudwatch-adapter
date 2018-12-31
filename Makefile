@@ -42,14 +42,14 @@ docker-build:
 	docker run -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/chankh/k8s-cloudwatch-adapter -e GOARCH=$(ARCH) $(GOIMAGE) /bin/bash -c "\
 		CGO_ENABLED=0 go build -tags netgo -o /build/adapter github.com/chankh/k8s-cloudwatch-adapter/cmd/adapter"
 
-	docker build -t $(REGISTRY)/$(IMAGE)-$(ARCH):$(VERSION) $(TEMP_DIR)
+	docker build -t $(REGISTRY)/$(IMAGE):$(ARCH)-$(VERSION) $(TEMP_DIR)
 	rm -rf $(TEMP_DIR)
 
 build-local-image: $(OUT_DIR)/$(ARCH)/adapter
 	sed "s|BASEIMAGE|scratch|g" deploy/Dockerfile > $(TEMP_DIR)/Dockerfile
 	cp  $(OUT_DIR)/$(ARCH)/adapter $(TEMP_DIR)
 	cd $(TEMP_DIR)
-	docker build -t $(REGISTRY)/$(IMAGE)-$(ARCH):$(VERSION) $(TEMP_DIR)
+	docker build -t $(REGISTRY)/$(IMAGE):$(ARCH)-$(VERSION) $(TEMP_DIR)
 	rm -rf $(TEMP_DIR)
 
 push-%:
@@ -57,7 +57,7 @@ push-%:
 	docker push $(REGISTRY)/$(IMAGE)-$*:$(VERSION)
 
 push: ./manifest-tool $(addprefix push-,$(ALL_ARCH))
-	./manifest-tool push from-args --platforms $(ML_PLATFORMS) --template $(REGISTRY)/$(IMAGE)-ARCH:$(VERSION) --target $(REGISTRY)/$(IMAGE):$(VERSION)
+	./manifest-tool push from-args --platforms $(ML_PLATFORMS) --template $(REGISTRY)/$(IMAGE):ARCH-$(VERSION) --target $(REGISTRY)/$(IMAGE):$(VERSION)
 
 ./manifest-tool:
 	curl -sSL https://github.com/estesp/manifest-tool/releases/download/v0.5.0/manifest-tool-linux-amd64 > manifest-tool

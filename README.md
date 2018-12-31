@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/chankh/k8s-cloudwatch-adapter.svg?branch=master)](https://travis-ci.org/chankh/k8s-cloudwatch-adapter)
+
 # Kubernetes AWS CloudWatch Metrics Adapter
 
 An implementation of the Kubernetes [Custom Metrics API and External Metrics
