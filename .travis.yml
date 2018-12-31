@@ -11,7 +11,7 @@ git:
 # in vendor/
 install: true
 
-script: make docker-build
+script: make
 
 sudo: required
 services:
