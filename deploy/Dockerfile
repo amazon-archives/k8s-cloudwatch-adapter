@@ -1,8 +1,8 @@
-FROM alpine:3.6 as alpine
+FROM alpine:3.8 as alpine
 
 RUN apk add -U --no-cache ca-certificates
 
-FROM BASEIMAGE
+FROM busybox
 COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY adapter /
 USER 1001:1001

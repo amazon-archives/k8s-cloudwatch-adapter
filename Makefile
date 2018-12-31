@@ -16,7 +16,7 @@ $(OUT_DIR)/adapter: $(src_deps)
 	CGO_ENABLED=0 GOARCH=$* go build -tags netgo -o $(OUT_DIR)/$*/adapter github.com/chankh/k8s-cloudwatch-adapter/cmd/adapter
 
 docker-build:
-	sed "s|BASEIMAGE|$(BASEIMAGE)|g" deploy/Dockerfile > $(TEMP_DIR)/Dockerfile
+	cp deploy/Dockerfile > $(TEMP_DIR)/Dockerfile
 	cd $(TEMP_DIR)
 
 	docker run -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/chankh/k8s-cloudwatch-adapter -e GOARCH=$(ARCH) $(GOIMAGE) /bin/bash -c "\
