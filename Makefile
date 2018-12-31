@@ -46,3 +46,6 @@ endif
 
 test:
 	CGO_ENABLED=0 go test ./pkg/...
+
+clean:
+	rm -rf ${OUT_DIR}
