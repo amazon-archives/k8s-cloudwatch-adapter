@@ -1,0 +1,21 @@
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta1
+metadata:
+  name: consumer-scaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1beta1
+    kind: Deployment
+    name: sqs-consumer
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Object
+    object:
+      metricName: sqslength
+      target:
+        apiVersion: extensions/v1beta
+        kind: Deployment
+        name: sqs-consumer
+      targetValue: 30
+
