@@ -51,7 +51,7 @@ spec:
       serviceAccountName: custom-metrics-apiserver
       containers:
       - name: custom-metrics-apiserver
-        image: 831212071815.dkr.ecr.us-west-2.amazonaws.com/k8s-cloudwatch-adapter:8
+        image: chankh/k8s-cloudwatch-adapter:latest
         args:
         - /adapter
         - --cert-dir=/tmp
