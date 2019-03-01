@@ -64,6 +64,6 @@ kubectl apply -f https://raw.githubusercontent.com/chankh/k8s-cloudwatch-adapter
 You can also can also query the api to available metrics:
 
 ```bash
-kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1" | jq .`
+kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1" | jq .
 ```
 

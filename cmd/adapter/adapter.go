@@ -20,9 +20,6 @@ import (
 type CloudWatchAdapter struct {
 	basecmd.AdapterBase
 
-	// AWSRegion is the region where CloudWatch metrics are pulled.
-	AWSRegion string
-
 	// AdapterConfigFile points to the file containing the metrics discovery configuration.
 	AdapterConfigFile string
 

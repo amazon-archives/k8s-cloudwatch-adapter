@@ -18,6 +18,11 @@ func NewCloudWatchClient() Client {
 		panic("unable to load SDK config, " + err.Error())
 	}
 
+	// check if region is set
+	if cfg.Region == "" {
+		cfg.Region = GetLocalRegion()
+	}
+
 	// Using the Config value, create the CloudWatch client
 	svc := cloudwatch.New(cfg)
 	return &cloudwatchClient{client: svc}
