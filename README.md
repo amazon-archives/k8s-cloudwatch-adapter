@@ -1,11 +1,11 @@
 [![Build Status](https://travis-ci.org/chankh/k8s-cloudwatch-adapter.svg?branch=master)](https://travis-ci.org/chankh/k8s-cloudwatch-adapter)
 [![GitHub
-release](https://img.shields.io/github/release/chankh/k8s-cloudwatch-adapter.svg?style=plastic)](https://github.com/chankh/k8s-cloudwatch-adapter/releases)
+release](https://img.shields.io/github/release/chankh/k8s-cloudwatch-adapter/all.svg)](https://github.com/chankh/k8s-cloudwatch-adapter/releases)
 ![docker image
-size](https://shields.beevelop.com/docker/image/image-size/chankh/k8s-cloudwatch-adapter/latest.svg?style=plastic)
+size](https://shields.beevelop.com/docker/image/image-size/chankh/k8s-cloudwatch-adapter/latest.svg)
 ![image
-layers](https://shields.beevelop.com/docker/image/layers/chankh/k8s-cloudwatch-adapter/latest.svg?style=plastic)
-![image pulls](https://shields.beevelop.com/docker/pulls/chankh/k8s-cloudwatch-adapter.svg?style=plastic)
+layers](https://shields.beevelop.com/docker/image/layers/chankh/k8s-cloudwatch-adapter/latest.svg)
+![image pulls](https://shields.beevelop.com/docker/pulls/chankh/k8s-cloudwatch-adapter.svg)
 
 # Kubernetes AWS CloudWatch Metrics Adapter
 
