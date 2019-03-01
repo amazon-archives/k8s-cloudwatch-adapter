@@ -18,6 +18,7 @@ import (
 
 	"github.com/chankh/k8s-cloudwatch-adapter/pkg/aws"
 	"github.com/chankh/k8s-cloudwatch-adapter/pkg/config"
+	"github.com/chankh/k8s-cloudwatch-adapter/pkg/metriccache"
 	"github.com/kubernetes-incubator/custom-metrics-apiserver/pkg/provider"
 	"github.com/kubernetes-incubator/custom-metrics-apiserver/pkg/provider/helpers"
 )
@@ -37,9 +38,10 @@ type cloudwatchProvider struct {
 	mapper   apimeta.RESTMapper
 	cwClient aws.Client
 
-	valuesLock sync.RWMutex
-	values     map[CustomMetricResource]resource.Quantity
-	series     []config.MetricSeriesConfig
+	valuesLock  sync.RWMutex
+	values      map[CustomMetricResource]resource.Quantity
+	series      []config.MetricSeriesConfig
+	metricCache *metriccache.MetricCache
 
 	// info maps metric info to information about the corresponding series
 	info map[provider.CustomMetricInfo]string
@@ -49,13 +51,14 @@ type cloudwatchProvider struct {
 }
 
 // NewFakeProvider returns an instance of testingProvider, along with its restful.WebService that opens endpoints to post new fake metrics
-func NewCloudWatchProvider(client dynamic.Interface, mapper apimeta.RESTMapper, cwClient aws.Client, series []config.MetricSeriesConfig) provider.MetricsProvider {
+func NewCloudWatchProvider(client dynamic.Interface, mapper apimeta.RESTMapper, cwClient aws.Client, series []config.MetricSeriesConfig, metricCache *metriccache.MetricCache) provider.MetricsProvider {
 	provider := &cloudwatchProvider{
-		client:   client,
-		mapper:   mapper,
-		cwClient: cwClient,
-		values:   make(map[CustomMetricResource]resource.Quantity),
-		series:   series,
+		client:      client,
+		mapper:      mapper,
+		cwClient:    cwClient,
+		values:      make(map[CustomMetricResource]resource.Quantity),
+		series:      series,
+		metricCache: metricCache,
 	}
 
 	provider.updateMetrics()

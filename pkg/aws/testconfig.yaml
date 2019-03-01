@@ -1,0 +1,33 @@
+series:
+  - name: elb_requests
+    resource:
+      resource: "service"
+    queries:
+      - id: my_elb
+        metricStat:
+          metric:
+            namespace: "AWS/NetworkELB"
+            metricName: "RequestCount"
+            dimensions:
+              - name: ActiveFlowCount
+                value: "net/ade5f86c30a5611e98e260acb94794ff/a8c658b4008f1e0f"
+          period: 60
+          stat: Average
+          unit: Count
+        returnData: true
+  - name: sqslength
+    resource:
+      resource: "deployment"
+    queries:
+      - id: sqs_helloworld
+        metricStat:
+          metric:
+            namespace: "AWS/SQS"
+            metricName: "ApproximateNumberOfMessagesVisible"
+            dimensions:
+              - name: QueueName
+                value: "helloworld"
+          period: 300
+          stat: Average
+          unit: Count
+        returnData: true

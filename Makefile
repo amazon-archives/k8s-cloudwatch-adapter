@@ -15,7 +15,7 @@ src_deps=$(shell find pkg cmd -type f -name "*.go")
 $(OUT_DIR)/adapter: $(src_deps)
 	CGO_ENABLED=0 GOARCH=$* go build -tags netgo -o $(OUT_DIR)/$*/adapter github.com/chankh/k8s-cloudwatch-adapter/cmd/adapter
 
-docker-build:
+docker-build: verify-apis
 	cp deploy/Dockerfile $(TEMP_DIR)/Dockerfile
 
 	docker run -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/chankh/k8s-cloudwatch-adapter -e GOARCH=amd64 $(GOIMAGE) /bin/bash -c "\
@@ -36,7 +36,7 @@ push: docker-build
 
 vendor: Gopkg.lock
 ifeq ($(VENDOR_DOCKERIZED),1)
-	docker run -it -v $(shell pwd):/go/src/github.com/chankh/k8s-cloudwatch-adapter -w /go/src/github.com/chankh/k8s-cloudwatch-adapter golang:1.10 /bin/bash -c "\
+	docker run -it -v $(shell pwd):/go/src/github.com/chankh/k8s-cloudwatch-adapter -w /go/src/github.com/chankh/k8s-cloudwatch-adapter $(GOIMAGE) /bin/bash -c "\
 		curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
 		&& dep ensure -vendor-only"
 else
@@ -48,3 +48,13 @@ test:
 
 clean:
 	rm -rf ${OUT_DIR}
+
+# Code gen helpers
+gen-apis: codegen-get
+	hack/update-codegen.sh
+
+verify-apis: codegen-get
+	hack/verify-codegen.sh
+
+codegen-get:
+	go get -u k8s.io/code-generator/...

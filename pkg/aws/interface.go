@@ -7,4 +7,5 @@ import (
 
 type Client interface {
 	Query(queries []config.MetricDataQuery) ([]cloudwatch.MetricDataResult, error)
+	QueryCloudWatch(query cloudwatch.GetMetricDataInput) ([]cloudwatch.MetricDataResult, error)
 }

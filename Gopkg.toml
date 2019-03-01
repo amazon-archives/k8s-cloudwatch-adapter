@@ -32,12 +32,12 @@
 # AWS deps
 [[constraint]]
   name = "github.com/aws/aws-sdk-go-v2"
-  version = "2.0.0-preview.5"
+  version = "v0.7.0"
 
 # Kubernetes deps
 [[constraint]]
   name = "github.com/kubernetes-incubator/custom-metrics-apiserver"
-  version = "kubernetes-1.11.2"
+  version = "kubernetes-1.11.8"
 
 [[override]]
   name = "k8s.io/api"

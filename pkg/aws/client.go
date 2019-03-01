@@ -22,6 +22,7 @@ func NewCloudWatchClient() Client {
 	if cfg.Region == "" {
 		cfg.Region = GetLocalRegion()
 	}
+	glog.Infof("using AWS Region: %s", cfg.Region)
 
 	// Using the Config value, create the CloudWatch client
 	svc := cloudwatch.New(cfg)
@@ -33,11 +34,6 @@ type cloudwatchClient struct {
 }
 
 func (c *cloudwatchClient) Query(queries []config.MetricDataQuery) ([]cloudwatch.MetricDataResult, error) {
-	now := time.Now()
-	endTime := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), 0, 0, now.Location())
-	// CloudWatch metrics have latency, we will grab in a 5 minute window and extract the latest value
-	startTime := endTime.Add(-5 * time.Minute)
-
 	mdq := make([]cloudwatch.MetricDataQuery, len(queries))
 	for i, q := range queries {
 		dimensions := make([]cloudwatch.Dimension, len(q.MetricStat.Metric.Dimensions))
@@ -79,14 +75,23 @@ func (c *cloudwatchClient) Query(queries []config.MetricDataQuery) ([]cloudwatch
 		}
 	}
 
-	cwQuery := &cloudwatch.GetMetricDataInput{
-		EndTime:           &endTime,
+	cwQuery := cloudwatch.GetMetricDataInput{
 		MetricDataQueries: mdq,
-		ScanBy:            "TimestampDescending",
-		StartTime:         &startTime,
 	}
+	return c.QueryCloudWatch(cwQuery)
+}
 
-	results, err := c.client.GetMetricDataRequest(cwQuery).Send()
+func (c *cloudwatchClient) QueryCloudWatch(cwQuery cloudwatch.GetMetricDataInput) ([]cloudwatch.MetricDataResult, error) {
+	now := time.Now()
+	endTime := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), 0, 0, now.Location())
+	// CloudWatch metrics have latency, we will grab in a 5 minute window and extract the latest value
+	startTime := endTime.Add(-5 * time.Minute)
+
+	cwQuery.EndTime = &endTime
+	cwQuery.StartTime = &startTime
+	cwQuery.ScanBy = "TimestampDescending"
+
+	results, err := c.client.GetMetricDataRequest(&cwQuery).Send()
 	if err != nil {
 		glog.Errorf("err: %v", err)
 		return []cloudwatch.MetricDataResult{}, err

@@ -16,6 +16,3 @@ spec:
       containers:
       - name: sqs-consumer
         image: chankh/sqs-consumer-sample
-        env:
-          - name: AWS_REGION
-            value: us-west-2
