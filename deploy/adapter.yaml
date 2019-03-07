@@ -51,14 +51,13 @@ spec:
       serviceAccountName: k8s-cloudwatch-adapter
       containers:
       - name: k8s-cloudwatch-adapter
-        image: chankh/k8s-cloudwatch-adapter:latest
+        image: chankh/k8s-cloudwatch-adapter:v0.2.0
         args:
         - /adapter
         - --cert-dir=/tmp
         - --secure-port=6443
         - --logtostderr=true
         - --v=10
-        - --config=/etc/config/cloudwatch.yaml
         ports:
         - containerPort: 6443
           name: https
@@ -67,16 +66,9 @@ spec:
         volumeMounts:
         - mountPath: /tmp
           name: temp-vol
-        - mountPath: /etc/config
-          name: config-vol
-          readOnly: true
       volumes:
       - name: temp-vol
         emptyDir: {}
-      - name: config-vol
-        configMap:
-          defaultMode: 420
-          name: k8s-cloudwatch-adapter
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
