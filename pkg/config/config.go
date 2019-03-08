@@ -7,7 +7,7 @@ type MetricsDiscoveryConfig struct {
 	Series []MetricSeriesConfig `yaml:"series"`
 }
 
-// MetricSeriesSpec contains the specification for a metric series.
+// MetricSeriesConfig contains the specification for a metric series.
 type MetricSeriesConfig struct {
 	// Name specifies the series name.
 	Name string `yaml:"name"`

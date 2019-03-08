@@ -27,6 +27,7 @@ func NewHandler(externalmetricLister listers.ExternalMetricLister, metricCache *
 	}
 }
 
+// ControllerHandler is a handler to process resource items
 type ControllerHandler interface {
 	Process(queueItem namespacedQueueItem) error
 }

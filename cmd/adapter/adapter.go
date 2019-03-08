@@ -22,6 +22,7 @@ import (
 	"github.com/kubernetes-incubator/custom-metrics-apiserver/pkg/provider"
 )
 
+// CloudWatchAdapter represents a custom metrics BaseAdapter for Amazon CloudWatch
 type CloudWatchAdapter struct {
 	basecmd.AdapterBase
 
