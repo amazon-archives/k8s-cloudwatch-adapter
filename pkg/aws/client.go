@@ -9,6 +9,7 @@ import (
 	"github.com/golang/glog"
 )
 
+// NewCloudWatchClient creates a new CloudWatch client.
 func NewCloudWatchClient() Client {
 	// Using the SDK's default configuration, loading additional config
 	// and credentials values from the environment variables, shared

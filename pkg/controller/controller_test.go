@@ -123,7 +123,7 @@ func TestRetryThenRemoveAfter5AttemptsWithExternalMetric(t *testing.T) {
 }
 func TestInvalidItemOnQueue(t *testing.T) {
 	// force the queue to have anything other than a string
-	// to exersize the invalid queue path
+	// to exercise the invalid queue path
 	var badenquer = func(c *Controller) func(obj interface{}) {
 		enquer := func(obj interface{}) {
 

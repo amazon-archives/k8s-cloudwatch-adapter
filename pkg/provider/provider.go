@@ -50,7 +50,8 @@ type cloudwatchProvider struct {
 	metrics []provider.CustomMetricInfo
 }
 
-// NewFakeProvider returns an instance of testingProvider, along with its restful.WebService that opens endpoints to post new fake metrics
+// NewCloudWatchProvider returns an instance of testingProvider, along with its restful.WebService
+// that opens endpoints to post new fake metrics
 func NewCloudWatchProvider(client dynamic.Interface, mapper apimeta.RESTMapper, cwClient aws.Client, series []config.MetricSeriesConfig, metricCache *metriccache.MetricCache) provider.MetricsProvider {
 	provider := &cloudwatchProvider{
 		client:      client,

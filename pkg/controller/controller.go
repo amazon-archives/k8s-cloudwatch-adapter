@@ -87,7 +87,7 @@ func (c *Controller) processNextItem() bool {
 
 	rawItem, quit := c.metricQueue.Get()
 	if quit {
-		glog.V(2).Info("recieved quit signal")
+		glog.V(2).Info("received quit signal")
 		return false
 	}
 
@@ -119,7 +119,7 @@ func (c *Controller) processNextItem() bool {
 	}
 
 	//if here success for get item
-	glog.V(2).Infof("succesfully proccessed item '%s'", queueItem)
+	glog.V(2).Infof("successfully processed item '%s'", queueItem)
 	c.metricQueue.Forget(rawItem)
 	return true
 }

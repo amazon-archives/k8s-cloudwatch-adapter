@@ -33,7 +33,7 @@ func (mc *MetricCache) Update(key string, name string, metricRequest interface{}
 	mc.metricNames[key] = name
 }
 
-// GetAzureMonitorRequest retrieves a metric request from the cache
+// GetCloudWatchRequest retrieves a metric request from the cache
 func (mc *MetricCache) GetCloudWatchRequest(namepace, name string) (cloudwatch.GetMetricDataInput, bool) {
 	mc.metricMutext.RLock()
 	defer mc.metricMutext.RUnlock()
@@ -48,7 +48,7 @@ func (mc *MetricCache) GetCloudWatchRequest(namepace, name string) (cloudwatch.G
 	return metricRequest.(cloudwatch.GetMetricDataInput), true
 }
 
-// Remove retrieves a metric request from the cache
+// Remove removes a metric request from the cache
 func (mc *MetricCache) Remove(key string) {
 	mc.metricMutext.Lock()
 	defer mc.metricMutext.Unlock()
@@ -57,7 +57,8 @@ func (mc *MetricCache) Remove(key string) {
 	delete(mc.metricNames, key)
 }
 
-func (mc *MetricCache) Keys() []string {
+// ListMetricNames retrieves a list of metric names from the cache.
+func (mc *MetricCache) ListMetricNames() []string {
 	keys := make([]string, len(mc.metricNames))
 	for k := range mc.metricNames {
 		keys = append(keys, mc.metricNames[k])

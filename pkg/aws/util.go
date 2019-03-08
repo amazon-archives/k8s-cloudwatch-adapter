@@ -7,6 +7,7 @@ import (
 	"github.com/golang/glog"
 )
 
+// GetLocalRegion gets the region ID from the instance metadata.
 func GetLocalRegion() string {
 	resp, err := http.Get("http://169.254.169.254/latest/meta-data/placement/availability-zone/")
 	if err != nil {

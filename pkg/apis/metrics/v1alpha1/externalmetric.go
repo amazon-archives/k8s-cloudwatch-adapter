@@ -22,6 +22,7 @@ type ExternalMetric struct {
 	Spec MetricSeriesSpec `json:"spec"`
 }
 
+// MetricSeriesSpec contains the specification for a metric series.
 type MetricSeriesSpec struct {
 	// Name specifies the series name.
 	Name string `json:"name"`
@@ -30,6 +31,7 @@ type MetricSeriesSpec struct {
 	Queries []MetricDataQuery `json:"queries"`
 }
 
+// MetricDataQuery represents the query structure used in GetMetricData operation to CloudWatch API.
 type MetricDataQuery struct {
 	// Resources specifies how associated Kubernetes resources should be discovered for
 	// the given metrics.
@@ -75,6 +77,7 @@ type MetricDataQuery struct {
 	ReturnData bool `json:"returnData"`
 }
 
+// MetricStat defines the metric to be returned, along with the statistics, period, and units.
 type MetricStat struct {
 	// The metric to return, including the metric name, namespace, and dimensions.
 	//
@@ -96,6 +99,7 @@ type MetricStat struct {
 	Unit string `json:"unit"`
 }
 
+// Metric represents a specific metric.
 type Metric struct {
 	// The dimensions for the metric.
 	Dimensions []Dimension `json:"dimensions"`
@@ -107,6 +111,7 @@ type Metric struct {
 	Namespace string `json:"namespace"`
 }
 
+// Dimension expands the identity of a metric.
 type Dimension struct {
 	// The name of the dimension.
 	//

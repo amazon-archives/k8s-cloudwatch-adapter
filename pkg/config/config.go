@@ -1,11 +1,13 @@
 package config
 
+// MetricsDiscoveryConfig describes the configuration for all metrics.
 type MetricsDiscoveryConfig struct {
 	// Series specify how to discover and map CloudWatch metrics to
 	// custom metrics API resources.
 	Series []MetricSeriesConfig `yaml:"series"`
 }
 
+// MetricSeriesSpec contains the specification for a metric series.
 type MetricSeriesConfig struct {
 	// Name specifies the series name.
 	Name string `yaml:"name"`
@@ -23,6 +25,7 @@ type GroupResource struct {
 	Resource string `yaml:"resource"`
 }
 
+// MetricDataQuery represents the query structure used in GetMetricData operation to CloudWatch API.
 type MetricDataQuery struct {
 	// Resources specifies how associated Kubernetes resources should be discovered for
 	// the given metrics.
@@ -68,6 +71,7 @@ type MetricDataQuery struct {
 	ReturnData bool `yaml:"returnData"`
 }
 
+// MetricStat defines the metric to be returned, along with the statistics, period, and units.
 type MetricStat struct {
 	// The metric to return, including the metric name, namespace, and dimensions.
 	//
@@ -89,6 +93,7 @@ type MetricStat struct {
 	Unit string `yaml:"unit"`
 }
 
+// Metric represents a specific metric.
 type Metric struct {
 	// The dimensions for the metric.
 	Dimensions []Dimension `yaml:"dimensions"`
@@ -100,6 +105,7 @@ type Metric struct {
 	Namespace string `yaml:"namespace"`
 }
 
+// Dimension expands the identity of a metric.
 type Dimension struct {
 	// The name of the dimension.
 	//

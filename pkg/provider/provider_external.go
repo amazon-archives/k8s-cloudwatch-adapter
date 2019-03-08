@@ -58,7 +58,7 @@ func (p *cloudwatchProvider) ListAllExternalMetrics() []provider.ExternalMetricI
 
 	// not implemented yet
 	externalMetricsInfo := []provider.ExternalMetricInfo{}
-	for _, name := range p.metricCache.Keys() {
+	for _, name := range p.metricCache.ListMetricNames() {
 		// only process if name is non-empty
 		if name != "" {
 			info := provider.ExternalMetricInfo{

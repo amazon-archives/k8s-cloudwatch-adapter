@@ -145,7 +145,7 @@ func TestWhenItemKindIsUnknown(t *testing.T) {
 		t.Errorf("error == %v, want nil", err)
 	}
 
-	_, exists := metriccache.GetCloudWatchRequest("default", "unkown")
+	_, exists := metriccache.GetCloudWatchRequest("default", "unknown")
 
 	if exists == true {
 		t.Errorf("exist = %v, want %v", exists, false)

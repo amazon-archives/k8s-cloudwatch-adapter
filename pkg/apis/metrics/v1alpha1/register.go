@@ -8,18 +8,19 @@ import (
 	"github.com/chankh/k8s-cloudwatch-adapter/pkg/apis/metrics"
 )
 
-// GroupVersion is the identifier for the API which includes
-// the name of the group and the version of the API
+// SchemeGroupVersion is the group version used to register these objects
 var SchemeGroupVersion = schema.GroupVersion{
 	Group:   externalmetric.GroupName,
 	Version: "v1alpha1",
 }
 
+// SchemeBuilder definition
 var (
 	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
 	AddToScheme   = SchemeBuilder.AddToScheme
 )
 
+// Resource takes an unqualified resource and returns back a Group qualified GroupResource
 func Resource(resource string) schema.GroupResource {
 	return SchemeGroupVersion.WithResource(resource).GroupResource()
 }
