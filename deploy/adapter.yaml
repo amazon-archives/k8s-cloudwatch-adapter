@@ -1,0 +1,239 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: custom-metrics
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: k8s-cloudwatch-adapter:system:auth-delegator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+- kind: ServiceAccount
+  name: k8s-cloudwatch-adapter
+  namespace: custom-metrics
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: k8s-cloudwatch-adapter-auth-reader
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: extension-apiserver-authentication-reader
+subjects:
+- kind: ServiceAccount
+  name: k8s-cloudwatch-adapter
+  namespace: custom-metrics
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: k8s-cloudwatch-adapter
+  name: k8s-cloudwatch-adapter
+  namespace: custom-metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-cloudwatch-adapter
+  template:
+    metadata:
+      labels:
+        app: k8s-cloudwatch-adapter
+      name: k8s-cloudwatch-adapter
+    spec:
+      serviceAccountName: k8s-cloudwatch-adapter
+      containers:
+      - name: k8s-cloudwatch-adapter
+        image: chankh/k8s-cloudwatch-adapter:v0.2.0
+        args:
+        - /adapter
+        - --cert-dir=/tmp
+        - --secure-port=6443
+        - --logtostderr=true
+        - --v=10
+        ports:
+        - containerPort: 6443
+          name: https
+        - containerPort: 8080
+          name: http
+        volumeMounts:
+        - mountPath: /tmp
+          name: temp-vol
+      volumes:
+      - name: temp-vol
+        emptyDir: {}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: k8s-cloudwatch-adapter-resource-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: k8s-cloudwatch-adapter-resource-reader
+subjects:
+- kind: ServiceAccount
+  name: k8s-cloudwatch-adapter
+  namespace: custom-metrics
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: k8s-cloudwatch-adapter
+  namespace: custom-metrics
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-cloudwatch-adapter
+  namespace: custom-metrics
+spec:
+  ports:
+  - name: https
+    port: 443
+    targetPort: 6443
+  - name: http
+    port: 80
+    targetPort: 8080
+  selector:
+    app: k8s-cloudwatch-adapter
+---
+apiVersion: apiregistration.k8s.io/v1beta1
+kind: APIService
+metadata:
+  name: v1beta1.custom.metrics.k8s.io
+spec:
+  service:
+    name: k8s-cloudwatch-adapter
+    namespace: custom-metrics
+  group: custom.metrics.k8s.io
+  version: v1beta1
+  insecureSkipTLSVerify: true
+  groupPriorityMinimum: 100
+  versionPriority: 100
+---
+apiVersion: apiregistration.k8s.io/v1beta1
+kind: APIService
+metadata:
+  name: v1beta1.external.metrics.k8s.io
+spec:
+  service:
+    name: k8s-cloudwatch-adapter
+    namespace: custom-metrics
+  group: external.metrics.k8s.io
+  version: v1beta1
+  insecureSkipTLSVerify: true
+  groupPriorityMinimum: 100
+  versionPriority: 100
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: k8s-cloudwatch-adapter:custom-metrics-reader
+rules:
+- apiGroups:
+  - custom.metrics.k8s.io
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: k8s-cloudwatch-adapter:external-metrics-reader
+rules:
+- apiGroups:
+  - external.metrics.k8s.io
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: k8s-cloudwatch-adapter-resource-reader
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - pods
+  - services
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: k8s-cloudwatch-adapter:custom-metrics-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: k8s-cloudwatch-adapter:custom-metrics-reader
+subjects:
+- kind: ServiceAccount
+  name: horizontal-pod-autoscaler
+  namespace: kube-systemn
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: k8s-cloudwatch-adapter:external-metrics-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: k8s-cloudwatch-adapter:external-metrics-reader
+subjects:
+- kind: ServiceAccount
+  name: horizontal-pod-autoscaler
+  namespace: kube-systemn
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: externalmetrics.metrics.aws
+spec:
+  group: metrics.aws
+  version: v1alpha1
+  names:
+    kind: ExternalMetric
+    plural: externalmetrics
+    singular: externalmetric
+  scope: Namespaced
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: k8s-cloudwatch-adapter:crd-metrics-reader
+  labels:
+    app: k8s-cloudwatch-adapter
+rules:
+- apiGroups:
+  - metrics.aws
+  resources:
+  - "externalmetrics"
+  verbs:
+  - list
+  - get
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: k8s-cloudwatch-adapter:crd-metrics-reader
+  labels:
+    app: k8s-cloudwatch-adapter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: k8s-cloudwatch-adapter:crd-metrics-reader
+subjects:
+  - name: k8s-cloudwatch-adapter
+    namespace: "custom-metrics"
+    kind: ServiceAccount

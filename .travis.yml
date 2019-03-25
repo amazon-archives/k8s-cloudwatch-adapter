@@ -1,0 +1,24 @@
+language: go
+
+go:
+- '1.11'
+
+# Only clone the most recent commit.
+git:
+  depth: 1
+
+script: make test docker-build
+
+sudo: required
+services:
+- docker
+
+deploy:
+- provider: script
+  script: bash .travis-push.sh
+  on:
+    branch: master
+- provider: script
+  script: bash .travis-push.sh
+  on:
+    tags: true

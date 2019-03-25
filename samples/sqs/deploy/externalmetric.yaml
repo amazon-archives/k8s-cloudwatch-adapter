@@ -1,0 +1,21 @@
+apiVersion: metrics.aws/v1alpha1
+kind: ExternalMetric
+metadata:
+  name: sqs-helloworld-length
+spec:
+  name: sqs-helloworld-length
+  resource:
+    resource: "deployment"
+  queries:
+    - id: sqs-helloworld-length
+      metricStat:
+        metric:
+          namespace: "AWS/SQS"
+          metricName: "ApproximateNumberOfMessagesVisible"
+          dimensions:
+            - name: QueueName
+              value: "helloworld"
+        period: 300
+        stat: Average
+        unit: Count
+      returnData: true
