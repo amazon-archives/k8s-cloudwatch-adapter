@@ -19,9 +19,9 @@ limitations under the License.
 package fake
 
 import (
-	clientset "github.com/chankh/k8s-cloudwatch-adapter/pkg/client/clientset/versioned"
-	metricsv1alpha1 "github.com/chankh/k8s-cloudwatch-adapter/pkg/client/clientset/versioned/typed/metrics/v1alpha1"
-	fakemetricsv1alpha1 "github.com/chankh/k8s-cloudwatch-adapter/pkg/client/clientset/versioned/typed/metrics/v1alpha1/fake"
+	clientset "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/clientset/versioned"
+	metricsv1alpha1 "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/clientset/versioned/typed/metrics/v1alpha1"
+	fakemetricsv1alpha1 "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/clientset/versioned/typed/metrics/v1alpha1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"

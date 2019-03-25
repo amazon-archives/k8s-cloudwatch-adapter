@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
-	listers "github.com/chankh/k8s-cloudwatch-adapter/pkg/client/listers/metrics/v1alpha1"
-	"github.com/chankh/k8s-cloudwatch-adapter/pkg/metriccache"
+	listers "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/listers/metrics/v1alpha1"
+	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/metriccache"
 	"github.com/golang/glog"
 
 	"k8s.io/apimachinery/pkg/api/errors"

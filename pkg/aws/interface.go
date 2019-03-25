@@ -2,7 +2,7 @@ package aws
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
-	"github.com/chankh/k8s-cloudwatch-adapter/pkg/config"
+	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/config"
 )
 
 // Client represents a client for Amazon CloudWatch.

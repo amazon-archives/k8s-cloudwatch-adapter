@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	api "github.com/chankh/k8s-cloudwatch-adapter/pkg/apis/metrics/v1alpha1"
-	"github.com/chankh/k8s-cloudwatch-adapter/pkg/client/clientset/versioned/fake"
-	informers "github.com/chankh/k8s-cloudwatch-adapter/pkg/client/informers/externalversions"
+	api "github.com/awslabs/k8s-cloudwatch-adapter/pkg/apis/metrics/v1alpha1"
+	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/clientset/versioned/fake"
+	informers "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/informers/externalversions"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"k8s.io/apimachinery/pkg/runtime"

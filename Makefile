@@ -13,13 +13,13 @@ all: test $(OUT_DIR)/adapter
 
 src_deps=$(shell find pkg cmd -type f -name "*.go")
 $(OUT_DIR)/adapter: $(src_deps)
-	CGO_ENABLED=0 GOARCH=$* go build -tags netgo -o $(OUT_DIR)/$*/adapter github.com/chankh/k8s-cloudwatch-adapter/cmd/adapter
+	CGO_ENABLED=0 GOARCH=$* go build -tags netgo -o $(OUT_DIR)/$*/adapter github.com/awslabs/k8s-cloudwatch-adapter/cmd/adapter
 
 docker-build: verify-apis
 	cp deploy/Dockerfile $(TEMP_DIR)/Dockerfile
 
-	docker run -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/chankh/k8s-cloudwatch-adapter -e GOARCH=amd64 $(GOIMAGE) /bin/bash -c "\
-		CGO_ENABLED=0 go build -tags netgo -o /build/adapter github.com/chankh/k8s-cloudwatch-adapter/cmd/adapter"
+	docker run -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/awslabs/k8s-cloudwatch-adapter -e GOARCH=amd64 $(GOIMAGE) /bin/bash -c "\
+		CGO_ENABLED=0 go build -tags netgo -o /build/adapter github.com/awslabs/k8s-cloudwatch-adapter/cmd/adapter"
 
 	docker build -t $(REGISTRY)/$(IMAGE):$(VERSION) $(TEMP_DIR)
 	rm -rf $(TEMP_DIR)
@@ -36,7 +36,7 @@ push: docker-build
 
 vendor: Gopkg.lock
 ifeq ($(VENDOR_DOCKERIZED),1)
-	docker run -it -v $(shell pwd):/go/src/github.com/chankh/k8s-cloudwatch-adapter -w /go/src/github.com/chankh/k8s-cloudwatch-adapter $(GOIMAGE) /bin/bash -c "\
+	docker run -it -v $(shell pwd):/go/src/github.com/awslabs/k8s-cloudwatch-adapter -w /go/src/github.com/awslabs/k8s-cloudwatch-adapter $(GOIMAGE) /bin/bash -c "\
 		curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
 		&& dep ensure -vendor-only"
 else

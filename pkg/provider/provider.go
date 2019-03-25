@@ -16,9 +16,9 @@ import (
 	"k8s.io/client-go/dynamic"
 	"k8s.io/metrics/pkg/apis/custom_metrics"
 
-	"github.com/chankh/k8s-cloudwatch-adapter/pkg/aws"
-	"github.com/chankh/k8s-cloudwatch-adapter/pkg/config"
-	"github.com/chankh/k8s-cloudwatch-adapter/pkg/metriccache"
+	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/aws"
+	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/config"
+	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/metriccache"
 	"github.com/kubernetes-incubator/custom-metrics-apiserver/pkg/provider"
 	"github.com/kubernetes-incubator/custom-metrics-apiserver/pkg/provider/helpers"
 )

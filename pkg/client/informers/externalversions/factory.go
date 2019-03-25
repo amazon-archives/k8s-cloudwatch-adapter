@@ -23,9 +23,9 @@ import (
 	sync "sync"
 	time "time"
 
-	versioned "github.com/chankh/k8s-cloudwatch-adapter/pkg/client/clientset/versioned"
-	internalinterfaces "github.com/chankh/k8s-cloudwatch-adapter/pkg/client/informers/externalversions/internalinterfaces"
-	metrics "github.com/chankh/k8s-cloudwatch-adapter/pkg/client/informers/externalversions/metrics"
+	versioned "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/clientset/versioned"
+	internalinterfaces "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/informers/externalversions/internalinterfaces"
+	metrics "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/informers/externalversions/metrics"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
