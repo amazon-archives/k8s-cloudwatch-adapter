@@ -37,7 +37,7 @@
 # Kubernetes deps
 [[constraint]]
   name = "github.com/kubernetes-incubator/custom-metrics-apiserver"
-  version = "kubernetes-1.11.8"
+  version = "kubernetes-1.11.2"
 
 [[override]]
   name = "k8s.io/api"
@@ -55,14 +55,9 @@
   name = "k8s.io/metrics"
   branch = "release-1.11"
 
-# Test deps
 [[constraint]]
-  name = "github.com/onsi/ginkgo"
-  version = "1.6.0"
-
-[[constraint]]
-  name = "github.com/onsi/gomega"
-  version = "1.4.2"
+  name = "k8s.io/code-generator"
+  revision = "bb26e2a0094425916babd5adf6fe6828363c8be4"
 
 # For dependency below: Refer to issue https://github.com/golang/dep/issues/1799
 [[override]]

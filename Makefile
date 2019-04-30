@@ -53,8 +53,8 @@ clean:
 gen-apis: codegen-get
 	hack/update-codegen.sh
 
-verify-apis: codegen-get
+verify-apis:
 	hack/verify-codegen.sh
 
 codegen-get:
-	go get -u k8s.io/code-generator/...
+	dep ensure -add k8s.io/code-generator/...
