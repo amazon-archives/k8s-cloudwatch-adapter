@@ -61,12 +61,14 @@ func main() {
 		} else {
 			fmt.Println("message:", msg)
 		}
-		_, err = svc.DeleteMessageRequest(&sqs.DeleteMessageInput{
-			QueueUrl:      q.QueueUrl,
-			ReceiptHandle: msg.Messages[0].ReceiptHandle,
-		}).Send()
-		if err != nil {
-			fmt.Println("error deleting message from queue:", err)
+		if len(msg.Messages) > 0 {
+			_, err = svc.DeleteMessageRequest(&sqs.DeleteMessageInput{
+				QueueUrl:      q.QueueUrl,
+				ReceiptHandle: msg.Messages[0].ReceiptHandle,
+			}).Send()
+			if err != nil {
+				fmt.Println("error deleting message from queue:", err)
+			}
 		}
 		// Implement some delay here to simulate processing time
 		time.Sleep(time.Duration(1000) * time.Millisecond)
