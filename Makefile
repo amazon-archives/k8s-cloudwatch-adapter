@@ -15,7 +15,7 @@ src_deps=$(shell find pkg cmd -type f -name "*.go")
 $(OUT_DIR)/adapter: $(src_deps)
 	CGO_ENABLED=0 GOARCH=$* go build -tags netgo -o $(OUT_DIR)/$*/adapter github.com/awslabs/k8s-cloudwatch-adapter/cmd/adapter
 
-docker-build: #verify-apis
+docker-build: verify-apis
 	cp deploy/Dockerfile $(TEMP_DIR)/Dockerfile
 
 	docker run -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/awslabs/k8s-cloudwatch-adapter -e GOARCH=amd64 $(GOIMAGE) /bin/bash -c "\
