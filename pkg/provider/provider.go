@@ -123,9 +123,12 @@ func (p *cloudwatchProvider) metricFor(value resource.Quantity, name types.Names
 		return nil, err
 	}
 
+	metricIdentifier := custom_metrics.MetricIdentifier{
+		Name: info.Metric,
+	}
 	metric := &custom_metrics.MetricValue{
 		DescribedObject: objRef,
-		MetricName:      info.Metric,
+		Metric:          metricIdentifier,
 		Timestamp:       metav1.Time{time.Now()},
 		Value:           value,
 	}

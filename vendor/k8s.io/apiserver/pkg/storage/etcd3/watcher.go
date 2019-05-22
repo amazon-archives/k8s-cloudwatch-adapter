@@ -210,7 +210,13 @@ func (wc *watchChan) startWatching(watchClosedCh chan struct{}) {
 			return
 		}
 		for _, e := range wres.Events {
-			wc.sendEvent(parseEvent(e))
+			parsedEvent, err := parseEvent(e)
+			if err != nil {
+				glog.Errorf("watch chan error: %v", err)
+				wc.sendError(err)
+				return
+			}
+			wc.sendEvent(parsedEvent)
 		}
 	}
 	// When we come to this point, it's only possible that client side ends the watch.
@@ -232,7 +238,7 @@ func (wc *watchChan) processEvent(wg *sync.WaitGroup) {
 				continue
 			}
 			if len(wc.resultChan) == outgoingBufSize {
-				glog.Warningf("Fast watcher, slow processing. Number of buffered events: %d."+
+				glog.V(3).Infof("Fast watcher, slow processing. Number of buffered events: %d."+
 					"Probably caused by slow dispatching events to watchers", outgoingBufSize)
 			}
 			// If user couldn't receive results fast enough, we also block incoming events from watcher.
@@ -339,7 +345,7 @@ func (wc *watchChan) sendError(err error) {
 
 func (wc *watchChan) sendEvent(e *event) {
 	if len(wc.incomingEventChan) == incomingBufSize {
-		glog.Warningf("Fast watcher, slow processing. Number of buffered events: %d."+
+		glog.V(3).Infof("Fast watcher, slow processing. Number of buffered events: %d."+
 			"Probably caused by slow decoding, user not receiving fast, or other processing logic",
 			incomingBufSize)
 	}

@@ -37,27 +37,35 @@
 # Kubernetes deps
 [[constraint]]
   name = "github.com/kubernetes-incubator/custom-metrics-apiserver"
-  version = "kubernetes-1.11.2"
+  revision = "b7016fc85e1c960758aef23e1d456a66997d1e26"
 
 [[override]]
   name = "k8s.io/api"
-  branch = "release-1.11"
+  branch = "release-1.12"
 
 [[constraint]]
   name = "k8s.io/apimachinery"
-  branch = "release-1.11"
+  branch = "release-1.12"
 
 [[constraint]]
   name = "k8s.io/apiserver"
-  branch = "release-1.11"
+  branch = "release-1.12"
 
 [[constraint]]
   name = "k8s.io/metrics"
-  branch = "release-1.11"
+  branch = "release-1.12"
 
 [[constraint]]
   name = "k8s.io/code-generator"
   revision = "bb26e2a0094425916babd5adf6fe6828363c8be4"
+
+[[constraint]]
+  name = "k8s.io/client-go"
+  branch = "release-9.0"
+  
+[[override]]
+  name = "github.com/evanphx/json-patch"
+  revision = "5858425f7550"
 
 # For dependency below: Refer to issue https://github.com/golang/dep/issues/1799
 [[override]]

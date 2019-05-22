@@ -73,11 +73,6 @@ type store struct {
 	leaseManager  *leaseManager
 }
 
-type elemForDecode struct {
-	data []byte
-	rev  uint64
-}
-
 type objState struct {
 	obj   runtime.Object
 	meta  *storage.ResponseMeta
@@ -238,7 +233,7 @@ func (s *store) conditionalDelete(ctx context.Context, key string, out runtime.O
 		if err != nil {
 			return err
 		}
-		if err := checkPreconditions(key, preconditions, origState.obj); err != nil {
+		if err := preconditions.Check(key, origState.obj); err != nil {
 			return err
 		}
 		txnResp, err := s.client.KV.Txn(ctx).If(
@@ -299,25 +294,26 @@ func (s *store) GuaranteedUpdate(
 
 	transformContext := authenticatedDataString(key)
 	for {
-		if err := checkPreconditions(key, preconditions, origState.obj); err != nil {
+		if err := preconditions.Check(key, origState.obj); err != nil {
 			return err
 		}
 
 		ret, ttl, err := s.updateState(origState, tryUpdate)
 		if err != nil {
-			// It's possible we were working with stale data
-			if mustCheckData && apierrors.IsConflict(err) {
-				// Actually fetch
-				origState, err = getCurrentState()
-				if err != nil {
-					return err
-				}
-				mustCheckData = false
-				// Retry
-				continue
+			// If our data is already up to date, return the error
+			if !mustCheckData {
+				return err
 			}
 
-			return err
+			// It's possible we were working with stale data
+			// Actually fetch
+			origState, err = getCurrentState()
+			if err != nil {
+				return err
+			}
+			mustCheckData = false
+			// Retry
+			continue
 		}
 
 		data, err := runtime.Encode(s.codec, ret)
@@ -513,10 +509,11 @@ func (s *store) List(ctx context.Context, key, resourceVersion string, pred stor
 		options = append(options, clientv3.WithLimit(pred.Limit))
 	}
 
-	var returnedRV int64
+	var returnedRV, continueRV int64
+	var continueKey string
 	switch {
 	case s.pagingEnabled && len(pred.Continue) > 0:
-		continueKey, continueRV, err := decodeContinue(pred.Continue, keyPrefix)
+		continueKey, continueRV, err = decodeContinue(pred.Continue, keyPrefix)
 		if err != nil {
 			return apierrors.NewBadRequest(fmt.Sprintf("invalid continue token: %v", err))
 		}
@@ -529,12 +526,16 @@ func (s *store) List(ctx context.Context, key, resourceVersion string, pred stor
 		options = append(options, clientv3.WithRange(rangeEnd))
 		key = continueKey
 
-		options = append(options, clientv3.WithRev(continueRV))
-		returnedRV = continueRV
-
+		// If continueRV > 0, the LIST request needs a specific resource version.
+		// continueRV==0 is invalid.
+		// If continueRV < 0, the request is for the latest resource version.
+		if continueRV > 0 {
+			options = append(options, clientv3.WithRev(continueRV))
+			returnedRV = continueRV
+		}
 	case s.pagingEnabled && pred.Limit > 0:
 		if len(resourceVersion) > 0 {
-			fromRV, err := s.versioner.ParseListResourceVersion(resourceVersion)
+			fromRV, err := s.versioner.ParseResourceVersion(resourceVersion)
 			if err != nil {
 				return apierrors.NewBadRequest(fmt.Sprintf("invalid resource version: %v", err))
 			}
@@ -549,7 +550,7 @@ func (s *store) List(ctx context.Context, key, resourceVersion string, pred stor
 
 	default:
 		if len(resourceVersion) > 0 {
-			fromRV, err := s.versioner.ParseListResourceVersion(resourceVersion)
+			fromRV, err := s.versioner.ParseResourceVersion(resourceVersion)
 			if err != nil {
 				return apierrors.NewBadRequest(fmt.Sprintf("invalid resource version: %v", err))
 			}
@@ -568,7 +569,7 @@ func (s *store) List(ctx context.Context, key, resourceVersion string, pred stor
 	for {
 		getResp, err := s.client.KV.Get(ctx, key, options...)
 		if err != nil {
-			return interpretListError(err, len(pred.Continue) > 0)
+			return interpretListError(err, len(pred.Continue) > 0, continueKey, keyPrefix)
 		}
 		hasMore = getResp.More
 
@@ -676,7 +677,7 @@ func (s *store) WatchList(ctx context.Context, key string, resourceVersion strin
 }
 
 func (s *store) watch(ctx context.Context, key string, rv string, pred storage.SelectionPredicate, recursive bool) (watch.Interface, error) {
-	rev, err := s.versioner.ParseWatchResourceVersion(rv)
+	rev, err := s.versioner.ParseResourceVersion(rv)
 	if err != nil {
 		return nil, err
 	}
@@ -792,21 +793,6 @@ func appendListItem(v reflect.Value, data []byte, rev uint64, pred storage.Selec
 	versioner.UpdateObject(obj, rev)
 	if matched, err := pred.Matches(obj); err == nil && matched {
 		v.Set(reflect.Append(v, reflect.ValueOf(obj).Elem()))
-	}
-	return nil
-}
-
-func checkPreconditions(key string, preconditions *storage.Preconditions, out runtime.Object) error {
-	if preconditions == nil {
-		return nil
-	}
-	objMeta, err := meta.Accessor(out)
-	if err != nil {
-		return storage.NewInternalErrorf("can't enforce preconditions %v on un-introspectable object %v, got error: %v", *preconditions, out, err)
-	}
-	if preconditions.UID != nil && *preconditions.UID != objMeta.GetUID() {
-		errMsg := fmt.Sprintf("Precondition failed: UID in precondition: %v, UID in object meta: %v", *preconditions.UID, objMeta.GetUID())
-		return storage.NewInvalidObjError(key, errMsg)
 	}
 	return nil
 }
