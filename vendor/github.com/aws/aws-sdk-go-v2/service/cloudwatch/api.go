@@ -3,6 +3,7 @@
 package cloudwatch
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -22,7 +23,8 @@ type DeleteAlarmsRequest struct {
 }
 
 // Send marshals and sends the DeleteAlarms API request.
-func (r DeleteAlarmsRequest) Send() (*DeleteAlarmsOutput, error) {
+func (r DeleteAlarmsRequest) Send(ctx context.Context) (*DeleteAlarmsOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -38,7 +40,7 @@ func (r DeleteAlarmsRequest) Send() (*DeleteAlarmsOutput, error) {
 //
 //    // Example sending a request using the DeleteAlarmsRequest method.
 //    req := client.DeleteAlarmsRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -74,7 +76,8 @@ type DeleteDashboardsRequest struct {
 }
 
 // Send marshals and sends the DeleteDashboards API request.
-func (r DeleteDashboardsRequest) Send() (*DeleteDashboardsOutput, error) {
+func (r DeleteDashboardsRequest) Send(ctx context.Context) (*DeleteDashboardsOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -91,7 +94,7 @@ func (r DeleteDashboardsRequest) Send() (*DeleteDashboardsOutput, error) {
 //
 //    // Example sending a request using the DeleteDashboardsRequest method.
 //    req := client.DeleteDashboardsRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -125,7 +128,8 @@ type DescribeAlarmHistoryRequest struct {
 }
 
 // Send marshals and sends the DescribeAlarmHistory API request.
-func (r DescribeAlarmHistoryRequest) Send() (*DescribeAlarmHistoryOutput, error) {
+func (r DescribeAlarmHistoryRequest) Send(ctx context.Context) (*DescribeAlarmHistoryOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -145,7 +149,7 @@ func (r DescribeAlarmHistoryRequest) Send() (*DescribeAlarmHistoryOutput, error)
 //
 //    // Example sending a request using the DescribeAlarmHistoryRequest method.
 //    req := client.DescribeAlarmHistoryRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -195,7 +199,7 @@ func (c *CloudWatch) DescribeAlarmHistoryRequest(input *DescribeAlarmHistoryInpu
 func (p *DescribeAlarmHistoryRequest) Paginate(opts ...aws.Option) DescribeAlarmHistoryPager {
 	return DescribeAlarmHistoryPager{
 		Pager: aws.Pager{
-			NewRequest: func() (*aws.Request, error) {
+			NewRequest: func(ctx context.Context) (*aws.Request, error) {
 				var inCpy *DescribeAlarmHistoryInput
 				if p.Input != nil {
 					tmp := *p.Input
@@ -204,6 +208,7 @@ func (p *DescribeAlarmHistoryRequest) Paginate(opts ...aws.Option) DescribeAlarm
 
 				req := p.Copy(inCpy)
 				req.ApplyOptions(opts...)
+				req.SetContext(ctx)
 
 				return req.Request, nil
 			},
@@ -231,7 +236,8 @@ type DescribeAlarmsRequest struct {
 }
 
 // Send marshals and sends the DescribeAlarms API request.
-func (r DescribeAlarmsRequest) Send() (*DescribeAlarmsOutput, error) {
+func (r DescribeAlarmsRequest) Send(ctx context.Context) (*DescribeAlarmsOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -249,7 +255,7 @@ func (r DescribeAlarmsRequest) Send() (*DescribeAlarmsOutput, error) {
 //
 //    // Example sending a request using the DescribeAlarmsRequest method.
 //    req := client.DescribeAlarmsRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -299,7 +305,7 @@ func (c *CloudWatch) DescribeAlarmsRequest(input *DescribeAlarmsInput) DescribeA
 func (p *DescribeAlarmsRequest) Paginate(opts ...aws.Option) DescribeAlarmsPager {
 	return DescribeAlarmsPager{
 		Pager: aws.Pager{
-			NewRequest: func() (*aws.Request, error) {
+			NewRequest: func(ctx context.Context) (*aws.Request, error) {
 				var inCpy *DescribeAlarmsInput
 				if p.Input != nil {
 					tmp := *p.Input
@@ -308,6 +314,7 @@ func (p *DescribeAlarmsRequest) Paginate(opts ...aws.Option) DescribeAlarmsPager
 
 				req := p.Copy(inCpy)
 				req.ApplyOptions(opts...)
+				req.SetContext(ctx)
 
 				return req.Request, nil
 			},
@@ -335,7 +342,8 @@ type DescribeAlarmsForMetricRequest struct {
 }
 
 // Send marshals and sends the DescribeAlarmsForMetric API request.
-func (r DescribeAlarmsForMetricRequest) Send() (*DescribeAlarmsForMetricOutput, error) {
+func (r DescribeAlarmsForMetricRequest) Send(ctx context.Context) (*DescribeAlarmsForMetricOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -352,7 +360,7 @@ func (r DescribeAlarmsForMetricRequest) Send() (*DescribeAlarmsForMetricOutput, 
 //
 //    // Example sending a request using the DescribeAlarmsForMetricRequest method.
 //    req := client.DescribeAlarmsForMetricRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -386,7 +394,8 @@ type DisableAlarmActionsRequest struct {
 }
 
 // Send marshals and sends the DisableAlarmActions API request.
-func (r DisableAlarmActionsRequest) Send() (*DisableAlarmActionsOutput, error) {
+func (r DisableAlarmActionsRequest) Send(ctx context.Context) (*DisableAlarmActionsOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -403,7 +412,7 @@ func (r DisableAlarmActionsRequest) Send() (*DisableAlarmActionsOutput, error) {
 //
 //    // Example sending a request using the DisableAlarmActionsRequest method.
 //    req := client.DisableAlarmActionsRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -439,7 +448,8 @@ type EnableAlarmActionsRequest struct {
 }
 
 // Send marshals and sends the EnableAlarmActions API request.
-func (r EnableAlarmActionsRequest) Send() (*EnableAlarmActionsOutput, error) {
+func (r EnableAlarmActionsRequest) Send(ctx context.Context) (*EnableAlarmActionsOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -455,7 +465,7 @@ func (r EnableAlarmActionsRequest) Send() (*EnableAlarmActionsOutput, error) {
 //
 //    // Example sending a request using the EnableAlarmActionsRequest method.
 //    req := client.EnableAlarmActionsRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -491,7 +501,8 @@ type GetDashboardRequest struct {
 }
 
 // Send marshals and sends the GetDashboard API request.
-func (r GetDashboardRequest) Send() (*GetDashboardOutput, error) {
+func (r GetDashboardRequest) Send(ctx context.Context) (*GetDashboardOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -511,7 +522,7 @@ func (r GetDashboardRequest) Send() (*GetDashboardOutput, error) {
 //
 //    // Example sending a request using the GetDashboardRequest method.
 //    req := client.GetDashboardRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -545,7 +556,8 @@ type GetMetricDataRequest struct {
 }
 
 // Send marshals and sends the GetMetricData API request.
-func (r GetMetricDataRequest) Send() (*GetMetricDataOutput, error) {
+func (r GetMetricDataRequest) Send(ctx context.Context) (*GetMetricDataOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -563,7 +575,7 @@ func (r GetMetricDataRequest) Send() (*GetMetricDataOutput, error) {
 // to create new time series that represent new insights into your data. For
 // example, using Lambda metrics, you could divide the Errors metric by the
 // Invocations metric to get an error rate time series. For more information
-// about metric math expressions, see Metric Math Syntax and Functions (http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html#metric-math-syntax)
+// about metric math expressions, see Metric Math Syntax and Functions (https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html#metric-math-syntax)
 // in the Amazon CloudWatch User Guide.
 //
 // Calls to the GetMetricData API have a different pricing structure than calls
@@ -595,7 +607,7 @@ func (r GetMetricDataRequest) Send() (*GetMetricDataOutput, error) {
 //
 //    // Example sending a request using the GetMetricDataRequest method.
 //    req := client.GetMetricDataRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -606,6 +618,12 @@ func (c *CloudWatch) GetMetricDataRequest(input *GetMetricDataInput) GetMetricDa
 		Name:       opGetMetricData,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &aws.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxDatapoints",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -619,6 +637,53 @@ func (c *CloudWatch) GetMetricDataRequest(input *GetMetricDataInput) GetMetricDa
 	return GetMetricDataRequest{Request: req, Input: input, Copy: c.GetMetricDataRequest}
 }
 
+// Paginate pages iterates over the pages of a GetMetricDataRequest operation,
+// calling the Next method for each page. Using the paginators Next
+// method will depict whether or not there are more pages.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a GetMetricData operation.
+//		req := client.GetMetricDataRequest(input)
+//		p := req.Paginate()
+//		for p.Next() {
+//			page := p.CurrentPage()
+//		}
+//
+//		if err := p.Err(); err != nil {
+//			return err
+//		}
+//
+func (p *GetMetricDataRequest) Paginate(opts ...aws.Option) GetMetricDataPager {
+	return GetMetricDataPager{
+		Pager: aws.Pager{
+			NewRequest: func(ctx context.Context) (*aws.Request, error) {
+				var inCpy *GetMetricDataInput
+				if p.Input != nil {
+					tmp := *p.Input
+					inCpy = &tmp
+				}
+
+				req := p.Copy(inCpy)
+				req.ApplyOptions(opts...)
+				req.SetContext(ctx)
+
+				return req.Request, nil
+			},
+		},
+	}
+}
+
+// GetMetricDataPager is used to paginate the request. This can be done by
+// calling Next and CurrentPage.
+type GetMetricDataPager struct {
+	aws.Pager
+}
+
+func (p *GetMetricDataPager) CurrentPage() *GetMetricDataOutput {
+	return p.Pager.CurrentPage().(*GetMetricDataOutput)
+}
+
 const opGetMetricStatistics = "GetMetricStatistics"
 
 // GetMetricStatisticsRequest is a API request type for the GetMetricStatistics API operation.
@@ -629,7 +694,8 @@ type GetMetricStatisticsRequest struct {
 }
 
 // Send marshals and sends the GetMetricStatistics API request.
-func (r GetMetricStatisticsRequest) Send() (*GetMetricStatisticsOutput, error) {
+func (r GetMetricStatisticsRequest) Send(ctx context.Context) (*GetMetricStatisticsOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -693,12 +759,12 @@ func (r GetMetricStatisticsRequest) Send() (*GetMetricStatisticsOutput, error) {
 // 2016.
 //
 // For information about metrics and dimensions supported by AWS services, see
-// the Amazon CloudWatch Metrics and Dimensions Reference (http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CW_Support_For_AWS.html)
+// the Amazon CloudWatch Metrics and Dimensions Reference (https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CW_Support_For_AWS.html)
 // in the Amazon CloudWatch User Guide.
 //
 //    // Example sending a request using the GetMetricStatisticsRequest method.
 //    req := client.GetMetricStatisticsRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -732,7 +798,8 @@ type GetMetricWidgetImageRequest struct {
 }
 
 // Send marshals and sends the GetMetricWidgetImage API request.
-func (r GetMetricWidgetImageRequest) Send() (*GetMetricWidgetImageOutput, error) {
+func (r GetMetricWidgetImageRequest) Send(ctx context.Context) (*GetMetricWidgetImageOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -762,7 +829,7 @@ func (r GetMetricWidgetImageRequest) Send() (*GetMetricWidgetImageOutput, error)
 //
 //    // Example sending a request using the GetMetricWidgetImageRequest method.
 //    req := client.GetMetricWidgetImageRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -796,7 +863,8 @@ type ListDashboardsRequest struct {
 }
 
 // Send marshals and sends the ListDashboards API request.
-func (r ListDashboardsRequest) Send() (*ListDashboardsOutput, error) {
+func (r ListDashboardsRequest) Send(ctx context.Context) (*ListDashboardsOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -818,7 +886,7 @@ func (r ListDashboardsRequest) Send() (*ListDashboardsOutput, error) {
 //
 //    // Example sending a request using the ListDashboardsRequest method.
 //    req := client.ListDashboardsRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -829,6 +897,12 @@ func (c *CloudWatch) ListDashboardsRequest(input *ListDashboardsInput) ListDashb
 		Name:       opListDashboards,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &aws.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -842,6 +916,53 @@ func (c *CloudWatch) ListDashboardsRequest(input *ListDashboardsInput) ListDashb
 	return ListDashboardsRequest{Request: req, Input: input, Copy: c.ListDashboardsRequest}
 }
 
+// Paginate pages iterates over the pages of a ListDashboardsRequest operation,
+// calling the Next method for each page. Using the paginators Next
+// method will depict whether or not there are more pages.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a ListDashboards operation.
+//		req := client.ListDashboardsRequest(input)
+//		p := req.Paginate()
+//		for p.Next() {
+//			page := p.CurrentPage()
+//		}
+//
+//		if err := p.Err(); err != nil {
+//			return err
+//		}
+//
+func (p *ListDashboardsRequest) Paginate(opts ...aws.Option) ListDashboardsPager {
+	return ListDashboardsPager{
+		Pager: aws.Pager{
+			NewRequest: func(ctx context.Context) (*aws.Request, error) {
+				var inCpy *ListDashboardsInput
+				if p.Input != nil {
+					tmp := *p.Input
+					inCpy = &tmp
+				}
+
+				req := p.Copy(inCpy)
+				req.ApplyOptions(opts...)
+				req.SetContext(ctx)
+
+				return req.Request, nil
+			},
+		},
+	}
+}
+
+// ListDashboardsPager is used to paginate the request. This can be done by
+// calling Next and CurrentPage.
+type ListDashboardsPager struct {
+	aws.Pager
+}
+
+func (p *ListDashboardsPager) CurrentPage() *ListDashboardsOutput {
+	return p.Pager.CurrentPage().(*ListDashboardsOutput)
+}
+
 const opListMetrics = "ListMetrics"
 
 // ListMetricsRequest is a API request type for the ListMetrics API operation.
@@ -852,7 +973,8 @@ type ListMetricsRequest struct {
 }
 
 // Send marshals and sends the ListMetrics API request.
-func (r ListMetricsRequest) Send() (*ListMetricsOutput, error) {
+func (r ListMetricsRequest) Send(ctx context.Context) (*ListMetricsOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -876,7 +998,7 @@ func (r ListMetricsRequest) Send() (*ListMetricsOutput, error) {
 //
 //    // Example sending a request using the ListMetricsRequest method.
 //    req := client.ListMetricsRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -926,7 +1048,7 @@ func (c *CloudWatch) ListMetricsRequest(input *ListMetricsInput) ListMetricsRequ
 func (p *ListMetricsRequest) Paginate(opts ...aws.Option) ListMetricsPager {
 	return ListMetricsPager{
 		Pager: aws.Pager{
-			NewRequest: func() (*aws.Request, error) {
+			NewRequest: func(ctx context.Context) (*aws.Request, error) {
 				var inCpy *ListMetricsInput
 				if p.Input != nil {
 					tmp := *p.Input
@@ -935,6 +1057,7 @@ func (p *ListMetricsRequest) Paginate(opts ...aws.Option) ListMetricsPager {
 
 				req := p.Copy(inCpy)
 				req.ApplyOptions(opts...)
+				req.SetContext(ctx)
 
 				return req.Request, nil
 			},
@@ -952,6 +1075,57 @@ func (p *ListMetricsPager) CurrentPage() *ListMetricsOutput {
 	return p.Pager.CurrentPage().(*ListMetricsOutput)
 }
 
+const opListTagsForResource = "ListTagsForResource"
+
+// ListTagsForResourceRequest is a API request type for the ListTagsForResource API operation.
+type ListTagsForResourceRequest struct {
+	*aws.Request
+	Input *ListTagsForResourceInput
+	Copy  func(*ListTagsForResourceInput) ListTagsForResourceRequest
+}
+
+// Send marshals and sends the ListTagsForResource API request.
+func (r ListTagsForResourceRequest) Send(ctx context.Context) (*ListTagsForResourceOutput, error) {
+	r.Request.SetContext(ctx)
+	err := r.Request.Send()
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Request.Data.(*ListTagsForResourceOutput), nil
+}
+
+// ListTagsForResourceRequest returns a request value for making API operation for
+// Amazon CloudWatch.
+//
+// Displays the tags associated with a CloudWatch resource. Alarms support tagging.
+//
+//    // Example sending a request using the ListTagsForResourceRequest method.
+//    req := client.ListTagsForResourceRequest(params)
+//    resp, err := req.Send(context.TODO())
+//    if err == nil {
+//        fmt.Println(resp)
+//    }
+//
+// Please also see https://docs.aws.amazon.com/goto/WebAPI/monitoring-2010-08-01/ListTagsForResource
+func (c *CloudWatch) ListTagsForResourceRequest(input *ListTagsForResourceInput) ListTagsForResourceRequest {
+	op := &aws.Operation{
+		Name:       opListTagsForResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &ListTagsForResourceInput{}
+	}
+
+	output := &ListTagsForResourceOutput{}
+	req := c.newRequest(op, input, output)
+	output.responseMetadata = aws.Response{Request: req}
+
+	return ListTagsForResourceRequest{Request: req, Input: input, Copy: c.ListTagsForResourceRequest}
+}
+
 const opPutDashboard = "PutDashboard"
 
 // PutDashboardRequest is a API request type for the PutDashboard API operation.
@@ -962,7 +1136,8 @@ type PutDashboardRequest struct {
 }
 
 // Send marshals and sends the PutDashboard API request.
-func (r PutDashboardRequest) Send() (*PutDashboardOutput, error) {
+func (r PutDashboardRequest) Send(ctx context.Context) (*PutDashboardOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -996,7 +1171,7 @@ func (r PutDashboardRequest) Send() (*PutDashboardOutput, error) {
 //
 //    // Example sending a request using the PutDashboardRequest method.
 //    req := client.PutDashboardRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -1030,7 +1205,8 @@ type PutMetricAlarmRequest struct {
 }
 
 // Send marshals and sends the PutMetricAlarm API request.
-func (r PutMetricAlarmRequest) Send() (*PutMetricAlarmOutput, error) {
+func (r PutMetricAlarmRequest) Send(ctx context.Context) (*PutMetricAlarmOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -1064,8 +1240,7 @@ func (r PutMetricAlarmRequest) Send() (*PutMetricAlarmOutput, error) {
 //
 //    * ec2:TerminateInstances for alarms with terminate actions
 //
-//    * ec2:DescribeInstanceRecoveryAttribute and ec2:RecoverInstances for alarms
-//    with recover actions
+//    * No specific permissions are needed for alarms with recover actions
 //
 // If you have read/write permissions for Amazon CloudWatch but not for Amazon
 // EC2, you can still create an alarm, but the stop or terminate actions are
@@ -1083,11 +1258,11 @@ func (r PutMetricAlarmRequest) Send() (*PutMetricAlarmOutput, error) {
 // The first time you create an alarm in the AWS Management Console, the CLI,
 // or by using the PutMetricAlarm API, CloudWatch creates the necessary service-linked
 // role for you. The service-linked role is called AWSServiceRoleForCloudWatchEvents.
-// For more information, see AWS service-linked role (http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_terms-and-concepts.html#iam-term-service-linked-role).
+// For more information, see AWS service-linked role (https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_terms-and-concepts.html#iam-term-service-linked-role).
 //
 //    // Example sending a request using the PutMetricAlarmRequest method.
 //    req := client.PutMetricAlarmRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -1123,7 +1298,8 @@ type PutMetricDataRequest struct {
 }
 
 // Send marshals and sends the PutMetricData API request.
-func (r PutMetricDataRequest) Send() (*PutMetricDataOutput, error) {
+func (r PutMetricDataRequest) Send(ctx context.Context) (*PutMetricDataOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -1158,8 +1334,8 @@ func (r PutMetricDataRequest) Send() (*PutMetricDataOutput, error) {
 // not supported.
 //
 // You can use up to 10 dimensions per metric to further clarify what data the
-// metric collects. For more information about specifying dimensions, see Publishing
-// Metrics (http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/publishingMetrics.html)
+// metric collects. Each dimension consists of a Name and Value pair. For more
+// information about specifying dimensions, see Publishing Metrics (https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/publishingMetrics.html)
 // in the Amazon CloudWatch User Guide.
 //
 // Data points with time stamps from 24 hours ago or longer can take at least
@@ -1177,7 +1353,7 @@ func (r PutMetricDataRequest) Send() (*PutMetricDataOutput, error) {
 //
 //    // Example sending a request using the PutMetricDataRequest method.
 //    req := client.PutMetricDataRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -1213,7 +1389,8 @@ type SetAlarmStateRequest struct {
 }
 
 // Send marshals and sends the SetAlarmState API request.
-func (r SetAlarmStateRequest) Send() (*SetAlarmStateOutput, error) {
+func (r SetAlarmStateRequest) Send(ctx context.Context) (*SetAlarmStateOutput, error) {
+	r.Request.SetContext(ctx)
 	err := r.Request.Send()
 	if err != nil {
 		return nil, err
@@ -1236,7 +1413,7 @@ func (r SetAlarmStateRequest) Send() (*SetAlarmStateOutput, error) {
 //
 //    // Example sending a request using the SetAlarmStateRequest method.
 //    req := client.SetAlarmStateRequest(params)
-//    resp, err := req.Send()
+//    resp, err := req.Send(context.TODO())
 //    if err == nil {
 //        fmt.Println(resp)
 //    }
@@ -1260,6 +1437,123 @@ func (c *CloudWatch) SetAlarmStateRequest(input *SetAlarmStateInput) SetAlarmSta
 	output.responseMetadata = aws.Response{Request: req}
 
 	return SetAlarmStateRequest{Request: req, Input: input, Copy: c.SetAlarmStateRequest}
+}
+
+const opTagResource = "TagResource"
+
+// TagResourceRequest is a API request type for the TagResource API operation.
+type TagResourceRequest struct {
+	*aws.Request
+	Input *TagResourceInput
+	Copy  func(*TagResourceInput) TagResourceRequest
+}
+
+// Send marshals and sends the TagResource API request.
+func (r TagResourceRequest) Send(ctx context.Context) (*TagResourceOutput, error) {
+	r.Request.SetContext(ctx)
+	err := r.Request.Send()
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Request.Data.(*TagResourceOutput), nil
+}
+
+// TagResourceRequest returns a request value for making API operation for
+// Amazon CloudWatch.
+//
+// Assigns one or more tags (key-value pairs) to the specified CloudWatch resource.
+// Tags can help you organize and categorize your resources. You can also use
+// them to scope user permissions, by granting a user permission to access or
+// change only resources with certain tag values. In CloudWatch, alarms can
+// be tagged.
+//
+// Tags don't have any semantic meaning to AWS and are interpreted strictly
+// as strings of characters.
+//
+// You can use the TagResource action with a resource that already has tags.
+// If you specify a new tag key for the resource, this tag is appended to the
+// list of tags associated with the resource. If you specify a tag key that
+// is already associated with the resource, the new tag value that you specify
+// replaces the previous value for that tag.
+//
+// You can associate as many as 50 tags with a resource.
+//
+//    // Example sending a request using the TagResourceRequest method.
+//    req := client.TagResourceRequest(params)
+//    resp, err := req.Send(context.TODO())
+//    if err == nil {
+//        fmt.Println(resp)
+//    }
+//
+// Please also see https://docs.aws.amazon.com/goto/WebAPI/monitoring-2010-08-01/TagResource
+func (c *CloudWatch) TagResourceRequest(input *TagResourceInput) TagResourceRequest {
+	op := &aws.Operation{
+		Name:       opTagResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &TagResourceInput{}
+	}
+
+	output := &TagResourceOutput{}
+	req := c.newRequest(op, input, output)
+	output.responseMetadata = aws.Response{Request: req}
+
+	return TagResourceRequest{Request: req, Input: input, Copy: c.TagResourceRequest}
+}
+
+const opUntagResource = "UntagResource"
+
+// UntagResourceRequest is a API request type for the UntagResource API operation.
+type UntagResourceRequest struct {
+	*aws.Request
+	Input *UntagResourceInput
+	Copy  func(*UntagResourceInput) UntagResourceRequest
+}
+
+// Send marshals and sends the UntagResource API request.
+func (r UntagResourceRequest) Send(ctx context.Context) (*UntagResourceOutput, error) {
+	r.Request.SetContext(ctx)
+	err := r.Request.Send()
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Request.Data.(*UntagResourceOutput), nil
+}
+
+// UntagResourceRequest returns a request value for making API operation for
+// Amazon CloudWatch.
+//
+// Removes one or more tags from the specified resource.
+//
+//    // Example sending a request using the UntagResourceRequest method.
+//    req := client.UntagResourceRequest(params)
+//    resp, err := req.Send(context.TODO())
+//    if err == nil {
+//        fmt.Println(resp)
+//    }
+//
+// Please also see https://docs.aws.amazon.com/goto/WebAPI/monitoring-2010-08-01/UntagResource
+func (c *CloudWatch) UntagResourceRequest(input *UntagResourceInput) UntagResourceRequest {
+	op := &aws.Operation{
+		Name:       opUntagResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &UntagResourceInput{}
+	}
+
+	output := &UntagResourceOutput{}
+	req := c.newRequest(op, input, output)
+	output.responseMetadata = aws.Response{Request: req}
+
+	return UntagResourceRequest{Request: req, Input: input, Copy: c.UntagResourceRequest}
 }
 
 // Represents the history of a specific alarm.
@@ -2042,7 +2336,7 @@ type GetMetricDataInput struct {
 	// For better performance, specify StartTime and EndTime values that align with
 	// the value of the metric's Period and sync up with the beginning and end of
 	// an hour. For example, if the Period of a metric is 5 minutes, specifying
-	// 12:05 or 12:30 as EndTime can get a faster response from CloudWatch then
+	// 12:05 or 12:30 as EndTime can get a faster response from CloudWatch than
 	// setting 12:07 or 12:29 as the EndTime.
 	//
 	// EndTime is a required field
@@ -2075,7 +2369,7 @@ type GetMetricDataInput struct {
 	// For better performance, specify StartTime and EndTime values that align with
 	// the value of the metric's Period and sync up with the beginning and end of
 	// an hour. For example, if the Period of a metric is 5 minutes, specifying
-	// 12:05 or 12:30 as StartTime can get a faster response from CloudWatch then
+	// 12:05 or 12:30 as StartTime can get a faster response from CloudWatch than
 	// setting 12:07 or 12:29 as the StartTime.
 	//
 	// StartTime is a required field
@@ -2127,6 +2421,16 @@ type GetMetricDataOutput struct {
 
 	responseMetadata aws.Response
 
+	// Contains a message about this GetMetricData operation, if the operation results
+	// in such a message. An example of a message that may be returned is Maximum
+	// number of allowed metrics exceeded. If there is a message, as much of the
+	// operation as possible is still executed.
+	//
+	// A message appears here only if it is related to the global GetMetricData
+	// operation. Any message about a specific metric returned by the operation
+	// appears in the MetricDataResult object returned for that metric.
+	Messages []MessageData `type:"list"`
+
 	// The metrics that are returned, including the metric name, namespace, and
 	// dimensions.
 	MetricDataResults []MetricDataResult `type:"list"`
@@ -2159,9 +2463,9 @@ type GetMetricStatisticsInput struct {
 	// dimensions as a separate metric. If a specific combination of dimensions
 	// was not published, you can't retrieve statistics for it. You must specify
 	// the same dimensions that were used when the metrics were created. For an
-	// example, see Dimension Combinations (http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#dimension-combinations)
+	// example, see Dimension Combinations (https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#dimension-combinations)
 	// in the Amazon CloudWatch User Guide. For more information about specifying
-	// dimensions, see Publishing Metrics (http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/publishingMetrics.html)
+	// dimensions, see Publishing Metrics (https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/publishingMetrics.html)
 	// in the Amazon CloudWatch User Guide.
 	Dimensions []Dimension `type:"list"`
 
@@ -2364,7 +2668,7 @@ type GetMetricWidgetImageInput struct {
 	// with the content-type set to text/xml. The image data is in a MetricWidgetImage
 	// field. For example:
 	//
-	// <GetMetricWidgetImageResponse xmlns="http://monitoring.amazonaws.com/doc/2010-08-01/">
+	// <GetMetricWidgetImageResponse xmlns=<URLstring>>
 	//
 	// <GetMetricWidgetImageResult>
 	//
@@ -2573,6 +2877,70 @@ func (s ListMetricsOutput) SDKResponseMetadata() aws.Response {
 	return s.responseMetadata
 }
 
+// Please also see https://docs.aws.amazon.com/goto/WebAPI/monitoring-2010-08-01/ListTagsForResourceInput
+type ListTagsForResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN of the CloudWatch resource that you want to view tags for. For more
+	// information on ARN format, see Example ARNs (https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-cloudwatch)
+	// in the Amazon Web Services General Reference.
+	//
+	// ResourceARN is a required field
+	ResourceARN *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s ListTagsForResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ListTagsForResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ListTagsForResourceInput) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "ListTagsForResourceInput"}
+
+	if s.ResourceARN == nil {
+		invalidParams.Add(aws.NewErrParamRequired("ResourceARN"))
+	}
+	if s.ResourceARN != nil && len(*s.ResourceARN) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("ResourceARN", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// Please also see https://docs.aws.amazon.com/goto/WebAPI/monitoring-2010-08-01/ListTagsForResourceOutput
+type ListTagsForResourceOutput struct {
+	_ struct{} `type:"structure"`
+
+	responseMetadata aws.Response
+
+	// The list of tag keys and values associated with the resource you specified.
+	Tags []Tag `type:"list"`
+}
+
+// String returns the string representation
+func (s ListTagsForResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ListTagsForResourceOutput) GoString() string {
+	return s.String()
+}
+
+// SDKResponseMetdata return sthe response metadata for the API.
+func (s ListTagsForResourceOutput) SDKResponseMetadata() aws.Response {
+	return s.responseMetadata
+}
+
 // A message returned by the GetMetricDataAPI, including a code and a description.
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/monitoring-2010-08-01/MessageData
 type MessageData struct {
@@ -2762,9 +3130,12 @@ func (s MetricAlarm) GoString() string {
 // A single PutMetricAlarm call can include up to 20 MetricDataQuery structures
 // in the array. The 20 structures can include as many as 10 structures that
 // contain a MetricStat parameter to retrieve a metric, and as many as 10 structures
-// that contain the Expression parameter to perform a math expression. Any expression
-// used in a PutMetricAlarm operation must return a single time series. For
-// more information, see Metric Math Syntax and Functions (http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html#metric-math-syntax)
+// that contain the Expression parameter to perform a math expression. Of those
+// Expression structures, one must have True as the value for ReturnData. The
+// result of this expression is the value the alarm watches.
+//
+// Any expression used in a PutMetricAlarm operation must return a single time
+// series. For more information, see Metric Math Syntax and Functions (https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html#metric-math-syntax)
 // in the Amazon CloudWatch User Guide.
 //
 // Some of the parameters of this structure also have different uses whether
@@ -2778,7 +3149,7 @@ type MetricDataQuery struct {
 	// is performing a math expression. This expression can use the Id of the other
 	// metrics to refer to those metrics, and can also use the Id of other expressions
 	// to use the result of those expressions. For more information about metric
-	// math expressions, see Metric Math Syntax and Functions (http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html#metric-math-syntax)
+	// math expressions, see Metric Math Syntax and Functions (https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html#metric-math-syntax)
 	// in the Amazon CloudWatch User Guide.
 	//
 	// Within each MetricDataQuery object, you must specify either Expression or
@@ -2931,7 +3302,7 @@ type MetricDatum struct {
 	// to one second. Setting this to 60 specifies this metric as a regular-resolution
 	// metric, which CloudWatch stores at 1-minute resolution. Currently, high resolution
 	// is available only for custom metrics. For more information about high-resolution
-	// metrics, see High-Resolution Metrics (http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/publishingMetrics.html#high-resolution-metrics)
+	// metrics, see High-Resolution Metrics (https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/publishingMetrics.html#high-resolution-metrics)
 	// in the Amazon CloudWatch User Guide.
 	//
 	// This field is optional, if you do not specify it the default of 60 is used.
@@ -3170,8 +3541,8 @@ type PutMetricAlarmInput struct {
 	// any other state. Each action is specified as an Amazon Resource Name (ARN).
 	//
 	// Valid Values: arn:aws:automate:region:ec2:stop | arn:aws:automate:region:ec2:terminate
-	// | arn:aws:automate:region:ec2:recover | arn:aws:sns:region:account-id:sns-topic-name
-	// | arn:aws:autoscaling:region:account-id:scalingPolicy:policy-idautoScalingGroupName/group-friendly-name:policyName/policy-friendly-name
+	// | arn:aws:automate:region:ec2:recover | arn:aws:automate:region:ec2:reboot
+	// | arn:aws:sns:region:account-id:sns-topic-name | arn:aws:autoscaling:region:account-id:scalingPolicy:policy-idautoScalingGroupName/group-friendly-name:policyName/policy-friendly-name
 	//
 	// Valid Values (for use with IAM roles): arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Stop/1.0
 	// | arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Terminate/1.0
@@ -3194,7 +3565,7 @@ type PutMetricAlarmInput struct {
 
 	// The number of datapoints that must be breaching to trigger the alarm. This
 	// is used only if you are setting an "M out of N" alarm. In that case, this
-	// value is the M. For more information, see Evaluating an Alarm (http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarm-evaluation)
+	// value is the M. For more information, see Evaluating an Alarm (https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarm-evaluation)
 	// in the Amazon CloudWatch User Guide.
 	DatapointsToAlarm *int64 `min:"1" type:"integer"`
 
@@ -3206,7 +3577,7 @@ type PutMetricAlarmInput struct {
 	// significant. If you specify evaluate or omit this parameter, the alarm is
 	// always evaluated and possibly changes state no matter how many data points
 	// are available. For more information, see Percentile-Based CloudWatch Alarms
-	// and Low Data Samples (http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#percentiles-with-low-samples).
+	// and Low Data Samples (https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#percentiles-with-low-samples).
 	//
 	// Valid Values: evaluate | ignore
 	EvaluateLowSampleCountPercentile *string `min:"1" type:"string"`
@@ -3233,8 +3604,8 @@ type PutMetricAlarmInput struct {
 	// Name (ARN).
 	//
 	// Valid Values: arn:aws:automate:region:ec2:stop | arn:aws:automate:region:ec2:terminate
-	// | arn:aws:automate:region:ec2:recover | arn:aws:sns:region:account-id:sns-topic-name
-	// | arn:aws:autoscaling:region:account-id:scalingPolicy:policy-idautoScalingGroupName/group-friendly-name:policyName/policy-friendly-name
+	// | arn:aws:automate:region:ec2:recover | arn:aws:automate:region:ec2:reboot
+	// | arn:aws:sns:region:account-id:sns-topic-name | arn:aws:autoscaling:region:account-id:scalingPolicy:policy-idautoScalingGroupName/group-friendly-name:policyName/policy-friendly-name
 	//
 	// Valid Values (for use with IAM roles): >arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Stop/1.0
 	// | arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Terminate/1.0
@@ -3252,6 +3623,10 @@ type PutMetricAlarmInput struct {
 	// An array of MetricDataQuery structures that enable you to create an alarm
 	// based on the result of a metric math expression. Each item in the Metrics
 	// array either retrieves a metric or performs a math expression.
+	//
+	// One item in the Metrics array is the expression that the alarm watches. You
+	// designate this expression by setting ReturnValue to true for this object
+	// in the array. For more information, see MetricDataQuery.
 	//
 	// If you use the Metrics parameter, you cannot include the MetricName, Dimensions,
 	// Period, Namespace, Statistic, or ExtendedStatistic parameters of PutMetricAlarm
@@ -3297,6 +3672,14 @@ type PutMetricAlarmInput struct {
 	// but not both.
 	Statistic Statistic `type:"string" enum:"true"`
 
+	// A list of key-value pairs to associate with the alarm. You can associate
+	// as many as 50 tags with an alarm.
+	//
+	// Tags can help you organize and categorize your resources. You can also use
+	// them to scope user permissions, by granting a user permission to access or
+	// change only resources with certain tag values.
+	Tags []Tag `type:"list"`
+
 	// The value against which the specified statistic is compared.
 	//
 	// Threshold is a required field
@@ -3304,7 +3687,7 @@ type PutMetricAlarmInput struct {
 
 	// Sets how this alarm is to handle missing data points. If TreatMissingData
 	// is omitted, the default behavior of missing is used. For more information,
-	// see Configuring How CloudWatch Alarms Treats Missing Data (http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-missing-data).
+	// see Configuring How CloudWatch Alarms Treats Missing Data (https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-missing-data).
 	//
 	// Valid Values: breaching | notBreaching | ignore | missing
 	TreatMissingData *string `min:"1" type:"string"`
@@ -3384,6 +3767,13 @@ func (s *PutMetricAlarmInput) Validate() error {
 		for i, v := range s.Metrics {
 			if err := v.Validate(); err != nil {
 				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Metrics", i), err.(aws.ErrInvalidParams))
+			}
+		}
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(aws.ErrInvalidParams))
 			}
 		}
 	}
@@ -3635,6 +4025,201 @@ func (s *StatisticSet) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// A key-value pair associated with a CloudWatch resource.
+// Please also see https://docs.aws.amazon.com/goto/WebAPI/monitoring-2010-08-01/Tag
+type Tag struct {
+	_ struct{} `type:"structure"`
+
+	// A string that you can use to assign a value. The combination of tag keys
+	// and values can help you organize and categorize your resources.
+	//
+	// Key is a required field
+	Key *string `min:"1" type:"string" required:"true"`
+
+	// The value for the specified tag key.
+	//
+	// Value is a required field
+	Value *string `type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s Tag) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s Tag) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *Tag) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "Tag"}
+
+	if s.Key == nil {
+		invalidParams.Add(aws.NewErrParamRequired("Key"))
+	}
+	if s.Key != nil && len(*s.Key) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("Key", 1))
+	}
+
+	if s.Value == nil {
+		invalidParams.Add(aws.NewErrParamRequired("Value"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// Please also see https://docs.aws.amazon.com/goto/WebAPI/monitoring-2010-08-01/TagResourceInput
+type TagResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN of the CloudWatch resource that you're adding tags to. For more information
+	// on ARN format, see Example ARNs (https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-cloudwatch)
+	// in the Amazon Web Services General Reference.
+	//
+	// ResourceARN is a required field
+	ResourceARN *string `min:"1" type:"string" required:"true"`
+
+	// The list of key-value pairs to associate with the resource.
+	//
+	// Tags is a required field
+	Tags []Tag `type:"list" required:"true"`
+}
+
+// String returns the string representation
+func (s TagResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TagResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *TagResourceInput) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "TagResourceInput"}
+
+	if s.ResourceARN == nil {
+		invalidParams.Add(aws.NewErrParamRequired("ResourceARN"))
+	}
+	if s.ResourceARN != nil && len(*s.ResourceARN) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("ResourceARN", 1))
+	}
+
+	if s.Tags == nil {
+		invalidParams.Add(aws.NewErrParamRequired("Tags"))
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(aws.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// Please also see https://docs.aws.amazon.com/goto/WebAPI/monitoring-2010-08-01/TagResourceOutput
+type TagResourceOutput struct {
+	_ struct{} `type:"structure"`
+
+	responseMetadata aws.Response
+}
+
+// String returns the string representation
+func (s TagResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TagResourceOutput) GoString() string {
+	return s.String()
+}
+
+// SDKResponseMetdata return sthe response metadata for the API.
+func (s TagResourceOutput) SDKResponseMetadata() aws.Response {
+	return s.responseMetadata
+}
+
+// Please also see https://docs.aws.amazon.com/goto/WebAPI/monitoring-2010-08-01/UntagResourceInput
+type UntagResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN of the CloudWatch resource that you're removing tags from. For more
+	// information on ARN format, see Example ARNs (https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-cloudwatch)
+	// in the Amazon Web Services General Reference.
+	//
+	// ResourceARN is a required field
+	ResourceARN *string `min:"1" type:"string" required:"true"`
+
+	// The list of tag keys to remove from the resource.
+	//
+	// TagKeys is a required field
+	TagKeys []string `type:"list" required:"true"`
+}
+
+// String returns the string representation
+func (s UntagResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UntagResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *UntagResourceInput) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "UntagResourceInput"}
+
+	if s.ResourceARN == nil {
+		invalidParams.Add(aws.NewErrParamRequired("ResourceARN"))
+	}
+	if s.ResourceARN != nil && len(*s.ResourceARN) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("ResourceARN", 1))
+	}
+
+	if s.TagKeys == nil {
+		invalidParams.Add(aws.NewErrParamRequired("TagKeys"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// Please also see https://docs.aws.amazon.com/goto/WebAPI/monitoring-2010-08-01/UntagResourceOutput
+type UntagResourceOutput struct {
+	_ struct{} `type:"structure"`
+
+	responseMetadata aws.Response
+}
+
+// String returns the string representation
+func (s UntagResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UntagResourceOutput) GoString() string {
+	return s.String()
+}
+
+// SDKResponseMetdata return sthe response metadata for the API.
+func (s UntagResourceOutput) SDKResponseMetadata() aws.Response {
+	return s.responseMetadata
 }
 
 type ComparisonOperator string

@@ -1,6 +1,7 @@
 package aws
 
 import (
+	"context"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws/external"
@@ -92,7 +93,7 @@ func (c *cloudwatchClient) QueryCloudWatch(cwQuery cloudwatch.GetMetricDataInput
 	cwQuery.StartTime = &startTime
 	cwQuery.ScanBy = "TimestampDescending"
 
-	results, err := c.client.GetMetricDataRequest(&cwQuery).Send()
+	results, err := c.client.GetMetricDataRequest(&cwQuery).Send(context.Background())
 	if err != nil {
 		glog.Errorf("err: %v", err)
 		return []cloudwatch.MetricDataResult{}, err

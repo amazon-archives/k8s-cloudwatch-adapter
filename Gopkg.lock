@@ -53,7 +53,7 @@
   version = "v1.4.2"
 
 [[projects]]
-  digest = "1:29b7ad2a61ab92e5c928aa4cc6aadca5de5135059eb278ade4672ba2e2cf13b5"
+  digest = "1:fe90a4dcd5d2308a9efb7c1fe1a5a6afd6ed604369138fce339cf1a52b7f7572"
   name = "github.com/aws/aws-sdk-go-v2"
   packages = [
     "aws",
@@ -79,8 +79,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "c2b476bac53067cebc587747e866881b2e383625"
-  version = "v0.7.0"
+  revision = "946751c824084162af83a0084acf059385f79664"
+  version = "v0.8.0"
 
 [[projects]]
   branch = "master"
@@ -178,7 +178,7 @@
   name = "github.com/evanphx/json-patch"
   packages = ["."]
   pruneopts = "UT"
-  revision = "5858425f7550"
+  revision = "5858425f75500d40c52783dce87d085a483ce135"
 
 [[projects]]
   digest = "1:2cd7915ab26ede7d95b8749e6b1f933f1c6d5398030684e6505940a10f31cfda"

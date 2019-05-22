@@ -32,7 +32,7 @@
 # AWS deps
 [[constraint]]
   name = "github.com/aws/aws-sdk-go-v2"
-  version = "v0.7.0"
+  version = "v0.8.0"
 
 # Kubernetes deps
 [[constraint]]
@@ -65,7 +65,7 @@
   
 [[override]]
   name = "github.com/evanphx/json-patch"
-  revision = "5858425f7550"
+  revision = "5858425f75500d40c52783dce87d085a483ce135"
 
 # For dependency below: Refer to issue https://github.com/golang/dep/issues/1799
 [[override]]
