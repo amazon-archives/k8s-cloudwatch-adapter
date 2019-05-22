@@ -7,7 +7,7 @@ spec:
   resource:
     resource: "deployment"
   queries:
-    - id: sqs-helloworld-length
+    - id: sqs_helloworld_length
       metricStat:
         metric:
           namespace: "AWS/SQS"
