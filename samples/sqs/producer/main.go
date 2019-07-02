@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
@@ -30,7 +31,7 @@ func main() {
 
 	q, err := svc.CreateQueueRequest(&sqs.CreateQueueInput{
 		QueueName: &queueName,
-	}).Send()
+	}).Send(context.Background())
 	if err != nil {
 		// handle queue creation error
 		fmt.Println("create queue: ", err)
@@ -49,7 +50,7 @@ func main() {
 		result, err := svc.SendMessageRequest(&sqs.SendMessageInput{
 			MessageBody: &message,
 			QueueUrl:    q.QueueUrl,
-		}).Send()
+		}).Send(context.Background())
 
 		if err != nil {
 			fmt.Println("Error", err)

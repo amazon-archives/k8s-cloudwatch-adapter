@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
@@ -36,7 +37,7 @@ func main() {
 
 	q, err := svc.GetQueueUrlRequest(&sqs.GetQueueUrlInput{
 		QueueName: &queueName,
-	}).Send()
+	}).Send(context.Background())
 	if err != nil {
 		// handle queue creation error
 		fmt.Println("cannot get queue:", err)
@@ -55,7 +56,7 @@ func main() {
 		msg, err := svc.ReceiveMessageRequest(&sqs.ReceiveMessageInput{
 			QueueUrl:        q.QueueUrl,
 			WaitTimeSeconds: &timeout,
-		}).Send()
+		}).Send(context.Background())
 		if err != nil {
 			fmt.Println("error receiving message from queue:", err)
 		} else {
@@ -65,7 +66,7 @@ func main() {
 			_, err = svc.DeleteMessageRequest(&sqs.DeleteMessageInput{
 				QueueUrl:      q.QueueUrl,
 				ReceiptHandle: msg.Messages[0].ReceiptHandle,
-			}).Send()
+			}).Send(context.Background())
 			if err != nil {
 				fmt.Println("error deleting message from queue:", err)
 			}
