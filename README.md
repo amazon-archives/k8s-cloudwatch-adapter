@@ -78,20 +78,7 @@ Role Binding, along with the deployment of the adapter.
 Next you can query the APIs to see if the adapter is deployed correctly by running:
 
 ```bash
-$ kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1" | jq .
-{
-  "kind": "APIResourceList",
-  "apiVersion": "v1",
-  "groupVersion": "custom.metrics.k8s.io/v1beta1",
-  "resources": [
-  ]
-}
-```
-
-and 
-
-```bash
-$ kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1" | jq.
+$ kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1" | jq .
 {
   "kind": "APIResourceList",
   "apiVersion": "v1",
