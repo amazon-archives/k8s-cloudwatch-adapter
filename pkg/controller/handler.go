@@ -67,53 +67,51 @@ func (h *Handler) handleExternalMetric(ns, name string, queueItem namespacedQueu
 
 	glog.V(2).Infof("externalMetricInfo: %v", externalMetricInfo)
 	queries := externalMetricInfo.Spec.Queries
+
+	// If changing logic in this block ensure changes are duplicated in
+	// `pkg/client.Query()`
 	cwMetricQueries := make([]cloudwatch.MetricDataQuery, len(queries))
 	for i, q := range queries {
-		dimensions := make([]cloudwatch.Dimension, len(q.MetricStat.Metric.Dimensions))
-		for j, d := range q.MetricStat.Metric.Dimensions {
-			dimensions[j] = cloudwatch.Dimension{
-				Name:  &d.Name,
-				Value: &d.Value,
-			}
+		q := q
+		mdq := cloudwatch.MetricDataQuery{
+			Id:         &q.ID,
+			Label:      &q.Label,
+			ReturnData: &q.ReturnData,
 		}
-		metric := &cloudwatch.Metric{
-			Dimensions: dimensions,
-			MetricName: &q.MetricStat.Metric.MetricName,
-			Namespace:  &q.MetricStat.Metric.Namespace,
-		}
-		unit := cloudwatch.StandardUnit(q.MetricStat.Unit)
-		var metricStat *cloudwatch.MetricStat
-		expression := q.Expression
-		id := q.ID
-		var e *string
 
-		if len(expression) == 0 {
-			e = nil
-			metricStat = &cloudwatch.MetricStat{
+		if len(q.Expression) == 0 {
+			dimensions := make([]cloudwatch.Dimension, len(q.MetricStat.Metric.Dimensions))
+			for j, d := range q.MetricStat.Metric.Dimensions {
+				dimensions[j] = cloudwatch.Dimension{
+					Name:  &d.Name,
+					Value: &d.Value,
+				}
+			}
+
+			metric := &cloudwatch.Metric{
+				Dimensions: dimensions,
+				MetricName: &q.MetricStat.Metric.MetricName,
+				Namespace:  &q.MetricStat.Metric.Namespace,
+			}
+
+			mdq.MetricStat = &cloudwatch.MetricStat{
 				Metric: metric,
 				Period: &q.MetricStat.Period,
 				Stat:   &q.MetricStat.Stat,
-				Unit:   unit,
+				Unit:   cloudwatch.StandardUnit(q.MetricStat.Unit),
 			}
 		} else {
-			e = &expression
-			metricStat = nil
+			mdq.Expression = &q.Expression
 		}
-		cwMetricQueries[i] = cloudwatch.MetricDataQuery{
-			Expression: e,
-			Id:         &id,
-			Label:      &q.Label,
-			MetricStat: metricStat,
-			ReturnData: &q.ReturnData,
-		}
-	}
 
-	cwMetricRequest := cloudwatch.GetMetricDataInput{
+		cwMetricQueries[i] = mdq
+	}
+	cwQuery := cloudwatch.GetMetricDataInput{
 		MetricDataQueries: cwMetricQueries,
 	}
 
 	glog.V(2).Infof("adding to cache item '%s' in namespace '%s'", name, ns)
-	h.metriccache.Update(queueItem.Key(), name, cwMetricRequest)
+	h.metriccache.Update(queueItem.Key(), name, cwQuery)
 
 	return nil
 }
