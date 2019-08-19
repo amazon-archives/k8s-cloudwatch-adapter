@@ -192,52 +192,53 @@ func validateExternalMetricResult(metricRequest cloudwatch.GetMetricDataInput, e
 		qStat := q.MetricStat
 		wantStat := wantQueries.MetricStat
 
-		qMetric := qStat.Metric
-		wantMetric := wantStat.Metric
+		if qStat != nil {
+			qMetric := qStat.Metric
+			wantMetric := wantStat.Metric
 
-		if len(qMetric.Dimensions) != len(wantMetric.Dimensions) {
-			t.Errorf("metricRequest Dimensions = %v, want = %v", qMetric.Dimensions, wantMetric.Dimensions)
-		}
-
-		for j, d := range qMetric.Dimensions {
-			if *d.Name != *qMetric.Dimensions[j].Name {
-				t.Errorf("metricRequest Dimension Name = %v, want = %v", d.Name, qMetric.Dimensions[j].Name)
+			if len(qMetric.Dimensions) != len(wantMetric.Dimensions) {
+				t.Errorf("metricRequest Dimensions = %v, want = %v", qMetric.Dimensions, wantMetric.Dimensions)
 			}
 
-			if *d.Value != *qMetric.Dimensions[j].Value {
-				t.Errorf("metricRequest Dimension Value = %v, want = %v", d.Value, qMetric.Dimensions[j].Value)
+			for j, d := range qMetric.Dimensions {
+				if *d.Name != *qMetric.Dimensions[j].Name {
+					t.Errorf("metricRequest Dimension Name = %v, want = %v", d.Name, qMetric.Dimensions[j].Name)
+				}
+
+				if *d.Value != *qMetric.Dimensions[j].Value {
+					t.Errorf("metricRequest Dimension Value = %v, want = %v", d.Value, qMetric.Dimensions[j].Value)
+				}
 			}
-		}
 
-		if *qMetric.MetricName != wantMetric.MetricName {
-			t.Errorf("metricRequest MetricNAme = %v, want %v", qMetric.MetricName, qMetric.MetricName)
-		}
+			if *qMetric.MetricName != wantMetric.MetricName {
+				t.Errorf("metricRequest MetricName = %v, want %v", *qMetric.MetricName, wantMetric.MetricName)
+			}
 
-		if *qMetric.Namespace != wantMetric.Namespace {
-			t.Errorf("metricRequest Namespace = %v, want %v", qMetric.Namespace, qMetric.Namespace)
-		}
+			if *qMetric.Namespace != wantMetric.Namespace {
+				t.Errorf("metricRequest Namespace = %v, want %v", *qMetric.Namespace, wantMetric.Namespace)
+			}
 
-		if *qStat.Period != wantStat.Period {
-			t.Errorf("metricRequest Period = %v, want %v", qStat.Period, wantStat.Period)
-		}
+			if *qStat.Period != wantStat.Period {
+				t.Errorf("metricRequest Period = %v, want %v", *qStat.Period, wantStat.Period)
+			}
 
-		if *qStat.Stat != wantStat.Stat {
-			t.Errorf("metricRequest Stat = %v, want %v", qStat.Stat, wantStat.Stat)
-		}
+			if *qStat.Stat != wantStat.Stat {
+				t.Errorf("metricRequest Stat = %v, want %v", *qStat.Stat, wantStat.Stat)
+			}
 
-		if string(qStat.Unit) != wantStat.Unit {
-			t.Errorf("metricRequest Unit = %v, want %v", qStat.Unit, wantStat.Unit)
+			if string(qStat.Unit) != wantStat.Unit {
+				t.Errorf("metricRequest Unit = %v, want %v", qStat.Unit, wantStat.Unit)
+			}
 		}
 
 		if *q.ReturnData != wantQueries.ReturnData {
-			t.Errorf("metricRequest ReturnData = %v, want %v", q.ReturnData, wantQueries.ReturnData)
+			t.Errorf("metricRequest ReturnData = %v, want %v", *q.ReturnData, wantQueries.ReturnData)
 		}
 	}
 
 }
 
 func newFullExternalMetric(name string) *api.ExternalMetric {
-	// must preserve upper casing for azure api
 	return &api.ExternalMetric{
 		TypeMeta: metav1.TypeMeta{APIVersion: api.SchemeGroupVersion.String(), Kind: "ExternalMetric"},
 		ObjectMeta: metav1.ObjectMeta{
@@ -246,23 +247,46 @@ func newFullExternalMetric(name string) *api.ExternalMetric {
 		},
 		Spec: api.MetricSeriesSpec{
 			Name: "Name",
-			Queries: []api.MetricDataQuery{{
-				ID: "queryID",
-				MetricStat: api.MetricStat{
-					Metric: api.Metric{
-						Dimensions: []api.Dimension{{
-							Name:  "DimensionName",
-							Value: "DimensionValue",
-						}},
-						MetricName: "metricName",
-						Namespace:  "namespace",
-					},
-					Period: 60,
-					Stat:   "Average",
-					Unit:   "Count",
+			Queries: []api.MetricDataQuery{
+				{
+					ID:         "query1",
+					Expression: "query2/query3",
 				},
-				ReturnData: true,
-			}},
+				{
+					ID: "query2",
+					MetricStat: api.MetricStat{
+						Metric: api.Metric{
+							Dimensions: []api.Dimension{{
+								Name:  "DimensionName1",
+								Value: "DimensionValue1",
+							}},
+							MetricName: "metricName1",
+							Namespace:  "namespace1",
+						},
+						Period: 60,
+						Stat:   "Average",
+						Unit:   "Bytes",
+					},
+					ReturnData: true,
+				},
+				{
+					ID: "query3",
+					MetricStat: api.MetricStat{
+						Metric: api.Metric{
+							Dimensions: []api.Dimension{{
+								Name:  "DimensionName2",
+								Value: "DimensionValue2",
+							}},
+							MetricName: "metricName2",
+							Namespace:  "namespace2",
+						},
+						Period: 60,
+						Stat:   "Sum",
+						Unit:   "Count",
+					},
+					ReturnData: false,
+				},
+			},
 		},
 	}
 }
