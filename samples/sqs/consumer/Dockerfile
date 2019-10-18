@@ -1,7 +1,7 @@
 FROM golang:1.11.4-alpine3.8 as builder
 
 WORKDIR /go/src/consumer
-COPY consumer/ .
+COPY main.go .
 
 RUN apk add -U git
 RUN go get ./...
@@ -14,5 +14,5 @@ RUN apk update \
     && rm -rf /var/cache/apk/* \
     && update-ca-certificates
     
-ENTRYPOINT ["/consumer"]
 COPY --from=builder /consumer /
+ENTRYPOINT ["/consumer"]

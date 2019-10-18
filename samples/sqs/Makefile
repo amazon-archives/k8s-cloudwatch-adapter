@@ -5,4 +5,6 @@ build:
 clean:
 	go clean && rm -rf ./bin
 consumer-container:
-	docker build -t chankh/sqs-consumer-sample .
+	docker build -t chankh/sqs-consumer-sample ./consumer
+producer-container:
+	docker build -t chankh/sqs-producer-sample ./producer

@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sqs-producer
+  annotations:
+    iam.amazonaws.com/role: k8s-pod-sqs-produce
+spec:
+  selector:
+    matchLabels:
+      app: sqs-producer
+  template:
+    metadata:
+      labels:
+        app: sqs-producer
+    spec:
+      containers:
+      - name: sqs-producer
+        image: chankh/sqs-producer-sample

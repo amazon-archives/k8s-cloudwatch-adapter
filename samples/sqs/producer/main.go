@@ -8,6 +8,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
+	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/aws"
 )
 
 func main() {
@@ -18,6 +19,11 @@ func main() {
 	if err != nil {
 		panic("unable to load SDK config, " + err.Error())
 	}
+
+	if cfg.Region == "" {
+		cfg.Region = aws.GetLocalRegion()
+	}
+	fmt.Println("using AWS Region:", cfg.Region)
 
 	svc := sqs.New(cfg)
 
