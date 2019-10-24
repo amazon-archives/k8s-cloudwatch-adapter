@@ -2,8 +2,10 @@ package aws
 
 import (
 	"context"
+	"os"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/config"
@@ -25,6 +27,10 @@ func NewCloudWatchClient() Client {
 		cfg.Region = GetLocalRegion()
 	}
 	glog.Infof("using AWS Region: %s", cfg.Region)
+
+	if os.Getenv("DEBUG") == "true" {
+		cfg.LogLevel = aws.LogDebugWithHTTPBody
+	}
 
 	// Using the Config value, create the CloudWatch client
 	svc := cloudwatch.New(cfg)
