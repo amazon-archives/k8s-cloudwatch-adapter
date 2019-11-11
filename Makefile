@@ -5,7 +5,7 @@ OUT_DIR?=./_output
 VENDOR_DOCKERIZED=0
 
 VERSION?=latest
-GOIMAGE=golang:1.12
+GOIMAGE=golang:1.13
 
 .PHONY: all docker-build push test build-local-image
 
@@ -19,7 +19,7 @@ docker-build: verify-apis
 	cp deploy/Dockerfile $(TEMP_DIR)/Dockerfile
 
 	docker run -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/awslabs/k8s-cloudwatch-adapter -e GOARCH=amd64 $(GOIMAGE) /bin/bash -c "\
-		CGO_ENABLED=0 go build -tags netgo -o /build/adapter github.com/awslabs/k8s-cloudwatch-adapter/cmd/adapter"
+		CGO_ENABLED=0 GO111MODULE=on go build -tags netgo -o /build/adapter github.com/awslabs/k8s-cloudwatch-adapter/cmd/adapter"
 
 	docker build -t $(REGISTRY)/$(IMAGE):$(VERSION) $(TEMP_DIR)
 	rm -rf $(TEMP_DIR)
