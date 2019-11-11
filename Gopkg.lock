@@ -353,7 +353,7 @@
   version = "v1.0.2"
 
 [[projects]]
-  digest = "1:398a3e3ecd267beb3a077f9072dd4d17e36d829bd5c73dc82066686e5d5f9c8b"
+  digest = "1:99d628466632d0b6ce7db1b19ec29facc668c54f46f9d6ce6b0dd6d2b1e82c65"
   name = "github.com/kubernetes-incubator/custom-metrics-apiserver"
   packages = [
     "pkg/apiserver",
@@ -362,7 +362,6 @@
     "pkg/cmd/server",
     "pkg/dynamicmapper",
     "pkg/provider",
-    "pkg/provider/helpers",
     "pkg/registry/custom_metrics",
     "pkg/registry/external_metrics",
   ]
@@ -1114,13 +1113,13 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/aws/aws-sdk-go-v2/aws",
     "github.com/aws/aws-sdk-go-v2/aws/external",
     "github.com/aws/aws-sdk-go-v2/service/cloudwatch",
     "github.com/aws/aws-sdk-go-v2/service/sqs",
     "github.com/golang/glog",
     "github.com/kubernetes-incubator/custom-metrics-apiserver/pkg/cmd",
     "github.com/kubernetes-incubator/custom-metrics-apiserver/pkg/provider",
-    "github.com/kubernetes-incubator/custom-metrics-apiserver/pkg/provider/helpers",
     "github.com/pkg/errors",
     "gopkg.in/yaml.v2",
     "k8s.io/apimachinery/pkg/api/errors",
@@ -1131,7 +1130,6 @@
     "k8s.io/apimachinery/pkg/runtime",
     "k8s.io/apimachinery/pkg/runtime/schema",
     "k8s.io/apimachinery/pkg/runtime/serializer",
-    "k8s.io/apimachinery/pkg/types",
     "k8s.io/apimachinery/pkg/util/runtime",
     "k8s.io/apimachinery/pkg/util/wait",
     "k8s.io/apimachinery/pkg/watch",
@@ -1145,7 +1143,6 @@
     "k8s.io/client-go/util/flowcontrol",
     "k8s.io/client-go/util/workqueue",
     "k8s.io/code-generator",
-    "k8s.io/metrics/pkg/apis/custom_metrics",
     "k8s.io/metrics/pkg/apis/external_metrics",
   ]
   solver-name = "gps-cdcl"

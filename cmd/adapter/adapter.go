@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"time"
 
@@ -13,8 +12,6 @@ import (
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/aws"
 	clientset "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/clientset/versioned"
 	informers "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/informers/externalversions"
-	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/config"
-	adaptercfg "github.com/awslabs/k8s-cloudwatch-adapter/pkg/config"
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/controller"
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/metriccache"
 	cwprov "github.com/awslabs/k8s-cloudwatch-adapter/pkg/provider"
@@ -25,21 +22,11 @@ import (
 // CloudWatchAdapter represents a custom metrics BaseAdapter for Amazon CloudWatch
 type CloudWatchAdapter struct {
 	basecmd.AdapterBase
-
-	// AdapterConfigFile points to the file containing the metrics discovery configuration.
-	AdapterConfigFile string
-
-	metricsConfig *adaptercfg.MetricsDiscoveryConfig
 }
 
 func (a *CloudWatchAdapter) makeCloudWatchClient() (aws.Client, error) {
 	client := aws.NewCloudWatchClient()
 	return client, nil
-}
-
-func (a *CloudWatchAdapter) addFlags() {
-	a.Flags().StringVar(&a.AdapterConfigFile, "config", a.AdapterConfigFile,
-		"Configuration file containing CloudWatch metric queries")
 }
 
 func (a *CloudWatchAdapter) newController(metriccache *metriccache.MetricCache) (*controller.Controller, informers.SharedInformerFactory) {
@@ -61,25 +48,8 @@ func (a *CloudWatchAdapter) newController(metriccache *metriccache.MetricCache) 
 
 	return controller, adapterInformerFactory
 }
-func (a *CloudWatchAdapter) loadConfig() error {
-	// config file is optional
-	if a.AdapterConfigFile == "" {
-		a.metricsConfig = &config.MetricsDiscoveryConfig{}
-		return nil
-	}
 
-	// load metrics discovery configuration
-	metricsConfig, err := adaptercfg.FromFile(a.AdapterConfigFile)
-	if err != nil {
-		return fmt.Errorf("unable to load metrics discovery configuration, %v", err)
-	}
-
-	a.metricsConfig = metricsConfig
-
-	return nil
-}
-
-func (a *CloudWatchAdapter) makeProvider(cwClient aws.Client, metriccache *metriccache.MetricCache) (provider.MetricsProvider, error) {
+func (a *CloudWatchAdapter) makeProvider(cwClient aws.Client, metriccache *metriccache.MetricCache) (provider.ExternalMetricsProvider, error) {
 	client, err := a.DynamicClient()
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to construct Kubernetes client")
@@ -90,7 +60,7 @@ func (a *CloudWatchAdapter) makeProvider(cwClient aws.Client, metriccache *metri
 		return nil, errors.Wrap(err, "unable to construct RESTMapper")
 	}
 
-	cwProvider := cwprov.NewCloudWatchProvider(client, mapper, cwClient, a.metricsConfig.Series, metriccache)
+	cwProvider := cwprov.NewCloudWatchProvider(client, mapper, cwClient, metriccache)
 	return cwProvider, nil
 }
 
@@ -101,7 +71,6 @@ func main() {
 	// set up flags
 	cmd := &CloudWatchAdapter{}
 	cmd.Name = "cloudwatch-metrics-adapter"
-	cmd.addFlags()
 	cmd.Flags().AddGoFlagSet(flag.CommandLine) // make sure we get the glog flags
 	cmd.Flags().Parse(os.Args)
 
@@ -121,18 +90,12 @@ func main() {
 		glog.Fatalf("unable to construct CloudWatch client: %v", err)
 	}
 
-	// load the config
-	if err := cmd.loadConfig(); err != nil {
-		glog.Fatalf("unable to load config: %v", err)
-	}
-
 	// construct the provider
 	cwProvider, err := cmd.makeProvider(cwClient, metriccache)
 	if err != nil {
 		glog.Fatalf("unable to construct CloudWatch metrics provider: %v", err)
 	}
 
-	cmd.WithCustomMetrics(cwProvider)
 	cmd.WithExternalMetrics(cwProvider)
 
 	glog.Info("CloudWatch metrics adapter started")
