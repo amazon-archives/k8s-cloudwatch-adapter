@@ -11,7 +11,7 @@ import (
 
 // MetricCache holds the loaded metric request info in the system
 type MetricCache struct {
-	metricMutext   sync.RWMutex
+	metricMutex    sync.RWMutex
 	metricRequests map[string]interface{}
 	metricNames    map[string]string
 }
@@ -26,8 +26,8 @@ func NewMetricCache() *MetricCache {
 
 // Update sets a metric request in the cache
 func (mc *MetricCache) Update(key string, name string, metricRequest interface{}) {
-	mc.metricMutext.Lock()
-	defer mc.metricMutext.Unlock()
+	mc.metricMutex.Lock()
+	defer mc.metricMutex.Unlock()
 
 	mc.metricRequests[key] = metricRequest
 	mc.metricNames[key] = name
@@ -35,8 +35,8 @@ func (mc *MetricCache) Update(key string, name string, metricRequest interface{}
 
 // GetCloudWatchRequest retrieves a metric request from the cache
 func (mc *MetricCache) GetCloudWatchRequest(namepace, name string) (cloudwatch.GetMetricDataInput, bool) {
-	mc.metricMutext.RLock()
-	defer mc.metricMutext.RUnlock()
+	mc.metricMutex.RLock()
+	defer mc.metricMutex.RUnlock()
 
 	key := externalMetricKey(namepace, name)
 	metricRequest, exists := mc.metricRequests[key]
@@ -50,8 +50,8 @@ func (mc *MetricCache) GetCloudWatchRequest(namepace, name string) (cloudwatch.G
 
 // Remove removes a metric request from the cache
 func (mc *MetricCache) Remove(key string) {
-	mc.metricMutext.Lock()
-	defer mc.metricMutext.Unlock()
+	mc.metricMutex.Lock()
+	defer mc.metricMutex.Unlock()
 
 	delete(mc.metricRequests, key)
 	delete(mc.metricNames, key)
