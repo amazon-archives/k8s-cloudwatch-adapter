@@ -38,7 +38,7 @@ func NewCloudWatchClient() Client {
 }
 
 type cloudwatchClient struct {
-	client *cloudwatch.CloudWatch
+	client *cloudwatch.Client
 }
 
 func (c *cloudwatchClient) Query(queries []config.MetricDataQuery) ([]cloudwatch.MetricDataResult, error) {
