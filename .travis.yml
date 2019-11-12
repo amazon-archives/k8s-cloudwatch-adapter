@@ -1,5 +1,9 @@
 language: go
 
+# Force-enable Go modules. Also force go to use the code in vendor/
+# These will both be unnecessary when Go 1.14 lands.
+env: GO111MODULE=on GOFLAGS='-mod vendor'
+
 go:
 - '1.x'
 
@@ -7,7 +11,11 @@ go:
 git:
   depth: 1
 
-script: make test docker-build
+# Skip the install step. Don't `go get` dependencies. Only build with the code
+# # in vendor/
+install: true
+
+script: make docker-build
 
 sudo: required
 services:

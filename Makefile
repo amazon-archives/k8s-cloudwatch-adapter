@@ -2,10 +2,11 @@ REGISTRY?=chankh
 IMAGE?=k8s-cloudwatch-adapter
 TEMP_DIR:=$(shell mktemp -d /tmp/$(IMAGE).XXXXXX)
 OUT_DIR?=./_output
-VENDOR_DOCKERIZED=0
+VENDOR_DOCKERIZED?=0
 
 VERSION?=latest
 GOIMAGE=golang:1.13
+GOFLAGS="-mod=vendor -tags=netgo"
 
 .PHONY: all docker-build push test build-local-image
 
@@ -13,13 +14,13 @@ all: test $(OUT_DIR)/adapter
 
 src_deps=$(shell find pkg cmd -type f -name "*.go")
 $(OUT_DIR)/adapter: $(src_deps)
-	CGO_ENABLED=0 GOARCH=$* go build -tags netgo -o $(OUT_DIR)/$*/adapter github.com/awslabs/k8s-cloudwatch-adapter/cmd/adapter
+	CGO_ENABLED=0 GOARCH=$* go build $(GOFLAGS) -o $(OUT_DIR)/$*/adapter cmd/adapter/adapter.go
 
-docker-build: verify-apis
+docker-build: #verify-apis test
 	cp deploy/Dockerfile $(TEMP_DIR)/Dockerfile
 
-	docker run -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/awslabs/k8s-cloudwatch-adapter -e GOARCH=amd64 $(GOIMAGE) /bin/bash -c "\
-		CGO_ENABLED=0 GO111MODULE=on go build -tags netgo -o /build/adapter github.com/awslabs/k8s-cloudwatch-adapter/cmd/adapter"
+	docker run -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/awslabs/k8s-cloudwatch-adapter -e GOARCH=amd64 -e GOFLAGS=$(GOFLAGS) -w /go/src/github.com/awslabs/k8s-cloudwatch-adapter $(GOIMAGE) /bin/bash -c "\
+		CGO_ENABLED=0 GO111MODULE=on go build -o /build/adapter cmd/adapter/adapter.go"
 
 	docker build -t $(REGISTRY)/$(IMAGE):$(VERSION) $(TEMP_DIR)
 	rm -rf $(TEMP_DIR)
@@ -31,30 +32,26 @@ build-local-image: $(OUT_DIR)/$(ARCH)/adapter
 	docker build -t $(REGISTRY)/$(IMAGE):$(VERSION) $(TEMP_DIR)
 	rm -rf $(TEMP_DIR)
 
-push: docker-build
+push:
 	docker push $(REGISTRY)/$(IMAGE):$(VERSION)
 
-vendor: Gopkg.lock
+vendor: go.mod
 ifeq ($(VENDOR_DOCKERIZED),1)
-	docker run -it -v $(shell pwd):/go/src/github.com/awslabs/k8s-cloudwatch-adapter -w /go/src/github.com/awslabs/k8s-cloudwatch-adapter $(GOIMAGE) /bin/bash -c "\
-		curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh \
-		&& dep ensure -vendor-only"
+	docker run -it -v $(shell pwd):/src/k8s-cloudwatch-adapter -w /src/k8s-cloudwatch-adapter $(GOIMAGE) /bin/bash -c "\
+		go mod vendor"
 else
-	dep ensure -vendor-only -v
+	go mod vendor
 endif
 
 test:
-	CGO_ENABLED=0 go test ./pkg/...
+	CGO_ENABLED=0 GO111MODULE=on go test ./pkg/...
 
 clean:
-	rm -rf ${OUT_DIR}
+	rm -rf ${OUT_DIR} vendor
 
 # Code gen helpers
-gen-apis: codegen-get
+gen-apis: vendor
 	hack/update-codegen.sh
 
-verify-apis:
+verify-apis: vendor
 	hack/verify-codegen.sh
-
-codegen-get:
-	dep ensure -add k8s.io/code-generator/...
