@@ -5,8 +5,7 @@ import (
 	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
-
-	"github.com/golang/glog"
+	"k8s.io/klog"
 )
 
 // MetricCache holds the loaded metric request info in the system
@@ -41,7 +40,7 @@ func (mc *MetricCache) GetCloudWatchRequest(namepace, name string) (cloudwatch.G
 	key := externalMetricKey(namepace, name)
 	metricRequest, exists := mc.metricRequests[key]
 	if !exists {
-		glog.V(2).Infof("metric not found %s", key)
+		klog.V(2).Infof("metric not found %s", key)
 		return cloudwatch.GetMetricDataInput{}, false
 	}
 

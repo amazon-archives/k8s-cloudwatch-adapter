@@ -5,9 +5,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/golang/glog"
 	"github.com/pkg/errors"
-	"k8s.io/apiserver/pkg/util/logs"
+	"k8s.io/component-base/logs"
+	"k8s.io/klog"
 
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/aws"
 	clientset "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/clientset/versioned"
@@ -32,11 +32,11 @@ func (a *CloudWatchAdapter) makeCloudWatchClient() (aws.Client, error) {
 func (a *CloudWatchAdapter) newController(metriccache *metriccache.MetricCache) (*controller.Controller, informers.SharedInformerFactory) {
 	clientConfig, err := a.ClientConfig()
 	if err != nil {
-		glog.Fatalf("unable to construct client config: %v", err)
+		klog.Fatalf("unable to construct client config: %v", err)
 	}
 	adapterClientSet, err := clientset.NewForConfig(clientConfig)
 	if err != nil {
-		glog.Fatalf("unable to construct lister client to initialize provider: %v", err)
+		klog.Fatalf("unable to construct lister client to initialize provider: %v", err)
 	}
 
 	adapterInformerFactory := informers.NewSharedInformerFactory(adapterClientSet, time.Second*30)
@@ -71,7 +71,7 @@ func main() {
 	// set up flags
 	cmd := &CloudWatchAdapter{}
 	cmd.Name = "cloudwatch-metrics-adapter"
-	cmd.Flags().AddGoFlagSet(flag.CommandLine) // make sure we get the glog flags
+	cmd.Flags().AddGoFlagSet(flag.CommandLine) // make sure we get the klog flags
 	cmd.Flags().Parse(os.Args)
 
 	stopCh := make(chan struct{})
@@ -87,20 +87,20 @@ func main() {
 	// create CloudWatch client
 	cwClient, err := cmd.makeCloudWatchClient()
 	if err != nil {
-		glog.Fatalf("unable to construct CloudWatch client: %v", err)
+		klog.Fatalf("unable to construct CloudWatch client: %v", err)
 	}
 
 	// construct the provider
 	cwProvider, err := cmd.makeProvider(cwClient, metriccache)
 	if err != nil {
-		glog.Fatalf("unable to construct CloudWatch metrics provider: %v", err)
+		klog.Fatalf("unable to construct CloudWatch metrics provider: %v", err)
 	}
 
 	cmd.WithExternalMetrics(cwProvider)
 
-	glog.Info("CloudWatch metrics adapter started")
+	klog.Info("CloudWatch metrics adapter started")
 
 	if err := cmd.Run(stopCh); err != nil {
-		glog.Fatalf("unable to run CloudWatch metrics adapter: %v", err)
+		klog.Fatalf("unable to run CloudWatch metrics adapter: %v", err)
 	}
 }

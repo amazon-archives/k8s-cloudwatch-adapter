@@ -6,11 +6,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	listers "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/listers/metrics/v1alpha1"
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/metriccache"
-	"github.com/golang/glog"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/tools/cache"
+	"k8s.io/klog"
 )
 
 // Handler processes the events from the controler for external metrics
@@ -52,12 +52,12 @@ func (h *Handler) Process(queueItem namespacedQueueItem) error {
 
 func (h *Handler) handleExternalMetric(ns, name string, queueItem namespacedQueueItem) error {
 	// check if item exists
-	glog.V(2).Infof("processing item '%s' in namespace '%s'", name, ns)
+	klog.V(2).Infof("processing item '%s' in namespace '%s'", name, ns)
 	externalMetricInfo, err := h.externalmetricLister.ExternalMetrics(ns).Get(name)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Then this we should remove
-			glog.V(2).Infof("removing item from cache '%s' in namespace '%s'", name, ns)
+			klog.V(2).Infof("removing item from cache '%s' in namespace '%s'", name, ns)
 			h.metriccache.Remove(queueItem.Key())
 			return nil
 		}
@@ -65,7 +65,7 @@ func (h *Handler) handleExternalMetric(ns, name string, queueItem namespacedQueu
 		return err
 	}
 
-	glog.V(2).Infof("externalMetricInfo: %v", externalMetricInfo)
+	klog.V(2).Infof("externalMetricInfo: %v", externalMetricInfo)
 	queries := externalMetricInfo.Spec.Queries
 
 	// If changing logic in this block ensure changes are duplicated in
@@ -110,7 +110,7 @@ func (h *Handler) handleExternalMetric(ns, name string, queueItem namespacedQueu
 		MetricDataQueries: cwMetricQueries,
 	}
 
-	glog.V(2).Infof("adding to cache item '%s' in namespace '%s'", name, ns)
+	klog.V(2).Infof("adding to cache item '%s' in namespace '%s'", name, ns)
 	h.metriccache.Update(queueItem.Key(), name, cwQuery)
 
 	return nil

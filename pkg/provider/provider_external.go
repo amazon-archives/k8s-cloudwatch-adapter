@@ -1,12 +1,12 @@
 package provider
 
 import (
-	"github.com/golang/glog"
 	"github.com/kubernetes-incubator/custom-metrics-apiserver/pkg/provider"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/klog"
 	"k8s.io/metrics/pkg/apis/external_metrics"
 )
 
@@ -14,7 +14,7 @@ func (p *cloudwatchProvider) GetExternalMetric(namespace string, metricSelector 
 	// Note:
 	//		metric name and namespace is used to lookup for the CRD which contains configuration to
 	//		call cloudwatch if not found then ignored and label selector is parsed for all the metrics
-	glog.V(0).Infof("Received request for namespace: %s, metric name: %s, metric selectors: %s", namespace, info.Metric, metricSelector.String())
+	klog.V(0).Infof("Received request for namespace: %s, metric name: %s, metric selectors: %s", namespace, info.Metric, metricSelector.String())
 
 	_, selectable := metricSelector.Requirements()
 	if !selectable {
@@ -28,7 +28,7 @@ func (p *cloudwatchProvider) GetExternalMetric(namespace string, metricSelector 
 
 	metricValue, err := p.cwClient.QueryCloudWatch(cwRequest)
 	if err != nil {
-		glog.Errorf("bad request: %v", err)
+		klog.Errorf("bad request: %v", err)
 		return nil, errors.NewBadRequest(err.Error())
 	}
 

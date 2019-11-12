@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/config"
-	"github.com/golang/glog"
+	"k8s.io/klog"
 )
 
 // NewCloudWatchClient creates a new CloudWatch client.
@@ -26,7 +26,7 @@ func NewCloudWatchClient() Client {
 	if cfg.Region == "" {
 		cfg.Region = GetLocalRegion()
 	}
-	glog.Infof("using AWS Region: %s", cfg.Region)
+	klog.Infof("using AWS Region: %s", cfg.Region)
 
 	if os.Getenv("DEBUG") == "true" {
 		cfg.LogLevel = aws.LogDebugWithHTTPBody
@@ -99,7 +99,7 @@ func (c *cloudwatchClient) QueryCloudWatch(cwQuery cloudwatch.GetMetricDataInput
 
 	results, err := c.client.GetMetricDataRequest(&cwQuery).Send(context.Background())
 	if err != nil {
-		glog.Errorf("err: %v", err)
+		klog.Errorf("err: %v", err)
 		return []cloudwatch.MetricDataResult{}, err
 	}
 

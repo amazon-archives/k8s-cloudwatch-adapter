@@ -6,11 +6,11 @@ import (
 
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/apis/metrics/v1alpha1"
 	informers "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/informers/externalversions/metrics/v1alpha1"
-	"github.com/golang/glog"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
+	"k8s.io/klog"
 )
 
 // Controller will do the work of syncing the external metrics the metric adapter knows about.
@@ -32,7 +32,7 @@ func NewController(externalMetricInformer informers.ExternalMetricInformer, metr
 	// wire up enque step.  This provides a hook for testing enqueue step
 	controller.enqueuer = controller.enqueueExternalMetric
 
-	glog.Info("Setting up external metric event handlers")
+	klog.Info("Setting up external metric event handlers")
 	externalMetricInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: controller.enqueuer,
 		UpdateFunc: func(old, new interface{}) {
@@ -54,7 +54,7 @@ func (c *Controller) Run(numberOfWorkers int, interval time.Duration, stopCh <-c
 	defer runtime.HandleCrash()
 	defer c.metricQueue.ShutDown()
 
-	glog.V(2).Info("initializing controller")
+	klog.V(2).Info("initializing controller")
 
 	// do the initial synchronization (one time) to populate resources
 	if !cache.WaitForCacheSync(stopCh, c.externalMetricSynced) {
@@ -62,32 +62,32 @@ func (c *Controller) Run(numberOfWorkers int, interval time.Duration, stopCh <-c
 		return
 	}
 
-	glog.V(2).Infof("starting %d workers with %d interval", numberOfWorkers, interval)
+	klog.V(2).Infof("starting %d workers with %d interval", numberOfWorkers, interval)
 	for i := 0; i < numberOfWorkers; i++ {
 		go wait.Until(c.runWorker, interval, stopCh)
 	}
 
 	<-stopCh
-	glog.Info("Shutting down workers")
+	klog.Info("Shutting down workers")
 	return
 }
 
 func (c *Controller) runWorker() {
-	glog.V(2).Info("Worker starting")
+	klog.V(2).Info("Worker starting")
 
 	for c.processNextItem() {
-		glog.V(2).Info("processing next item")
+		klog.V(2).Info("processing next item")
 	}
 
-	glog.V(2).Info("worker completed")
+	klog.V(2).Info("worker completed")
 }
 
 func (c *Controller) processNextItem() bool {
-	glog.V(2).Info("processing item")
+	klog.V(2).Info("processing item")
 
 	rawItem, quit := c.metricQueue.Get()
 	if quit {
-		glog.V(2).Info("received quit signal")
+		klog.V(2).Info("received quit signal")
 		return false
 	}
 
@@ -106,20 +106,20 @@ func (c *Controller) processNextItem() bool {
 	if err != nil {
 		retrys := c.metricQueue.NumRequeues(rawItem)
 		if retrys < 5 {
-			glog.Errorf("Transient error with %d retrys for key %s: %s", retrys, rawItem, err)
+			klog.Errorf("Transient error with %d retrys for key %s: %s", retrys, rawItem, err)
 			c.metricQueue.AddRateLimited(rawItem)
 			return true
 		}
 
 		// something was wrong with the item on queue
-		glog.Errorf("Max retries hit for key %s: %s", rawItem, err)
+		klog.Errorf("Max retries hit for key %s: %s", rawItem, err)
 		c.metricQueue.Forget(rawItem)
 		runtime.HandleError(err)
 		return true
 	}
 
 	//if here success for get item
-	glog.V(2).Infof("successfully processed item '%s'", queueItem)
+	klog.V(2).Infof("successfully processed item '%s'", queueItem)
 	c.metricQueue.Forget(rawItem)
 	return true
 }
@@ -134,7 +134,7 @@ func (c *Controller) enqueueExternalMetric(obj interface{}) {
 
 	kind := getKind(obj)
 
-	glog.V(2).Infof("adding item to queue for '%s' with kind '%s'", key, kind)
+	klog.V(2).Infof("adding item to queue for '%s' with kind '%s'", key, kind)
 	c.metricQueue.AddRateLimited(namespacedQueueItem{
 		namespaceKey: key,
 		kind:         kind,
@@ -168,7 +168,7 @@ func getKind(obj interface{}) string {
 	case *v1alpha1.ExternalMetric:
 		return "ExternalMetric"
 	default:
-		glog.Error("No known type of object")
+		klog.Error("No known type of object")
 		return ""
 	}
 }
