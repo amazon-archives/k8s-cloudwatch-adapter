@@ -81,10 +81,10 @@ func (h *Handler) handleExternalMetric(ns, name string, queueItem namespacedQueu
 
 		if len(q.Expression) == 0 {
 			dimensions := make([]cloudwatch.Dimension, len(q.MetricStat.Metric.Dimensions))
-			for j, d := range q.MetricStat.Metric.Dimensions {
+			for j, _ := range q.MetricStat.Metric.Dimensions {
 				dimensions[j] = cloudwatch.Dimension{
-					Name:  &d.Name,
-					Value: &d.Value,
+					Name:  &q.MetricStat.Metric.Dimensions[j].Name,
+					Value: &q.MetricStat.Metric.Dimensions[j].Value,
 				}
 			}
 
