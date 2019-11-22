@@ -232,10 +232,6 @@ func newExternalMetric() *api.ExternalMetric {
 						Dimensions: []api.Dimension{{
 							Name:  "DimensionName1",
 							Value: "DimensionValue1",
-						},
-						{
-							Name:  "DimensionName2",
-							Value: "DimensionValue2",
 						}},
 						MetricName: "metricName",
 						Namespace:  "namespace",

@@ -201,12 +201,12 @@ func validateExternalMetricResult(metricRequest cloudwatch.GetMetricDataInput, e
 			}
 
 			for j, d := range qMetric.Dimensions {
-				if *d.Name != *qMetric.Dimensions[j].Name {
-					t.Errorf("metricRequest Dimension Name = %v, want = %v", d.Name, qMetric.Dimensions[j].Name)
+				if *d.Name != wantMetric.Dimensions[j].Name {
+					t.Errorf("metricRequest Dimension Name = %v, want = %v", *d.Name, wantMetric.Dimensions[j].Name)
 				}
 
-				if *d.Value != *qMetric.Dimensions[j].Value {
-					t.Errorf("metricRequest Dimension Value = %v, want = %v", d.Value, qMetric.Dimensions[j].Value)
+				if *d.Value != wantMetric.Dimensions[j].Value {
+					t.Errorf("metricRequest Dimension Value = %v, want = %v", *d.Value, wantMetric.Dimensions[j].Value)
 				}
 			}
 
@@ -276,6 +276,10 @@ func newFullExternalMetric(name string) *api.ExternalMetric {
 							Dimensions: []api.Dimension{{
 								Name:  "DimensionName2",
 								Value: "DimensionValue2",
+							},
+							{
+								Name:  "DimensionName3",
+								Value: "DimensionValue3",
 							}},
 							MetricName: "metricName2",
 							Namespace:  "namespace2",
