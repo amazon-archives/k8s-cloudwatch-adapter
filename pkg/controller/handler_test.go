@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	api "github.com/awslabs/k8s-cloudwatch-adapter/pkg/apis/metrics/v1alpha1"
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/metriccache"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -226,7 +227,7 @@ func validateExternalMetricResult(metricRequest cloudwatch.GetMetricDataInput, e
 				t.Errorf("metricRequest Stat = %v, want %v", *qStat.Stat, wantStat.Stat)
 			}
 
-			if string(qStat.Unit) != wantStat.Unit {
+			if aws.StringValue(qStat.Unit) != wantStat.Unit {
 				t.Errorf("metricRequest Unit = %v, want %v", qStat.Unit, wantStat.Unit)
 			}
 		}
@@ -277,10 +278,10 @@ func newFullExternalMetric(name string) *api.ExternalMetric {
 								Name:  "DimensionName2",
 								Value: "DimensionValue2",
 							},
-							{
-								Name:  "DimensionName3",
-								Value: "DimensionValue3",
-							}},
+								{
+									Name:  "DimensionName3",
+									Value: "DimensionValue3",
+								}},
 							MetricName: "metricName2",
 							Namespace:  "namespace2",
 						},
