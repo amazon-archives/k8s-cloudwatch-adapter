@@ -6,26 +6,24 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/aws/aws-sdk-go-v2/aws/external"
-	"github.com/aws/aws-sdk-go-v2/service/sqs"
-	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/aws"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/sqs"
+	util "github.com/awslabs/k8s-cloudwatch-adapter/pkg/aws"
 )
 
 func main() {
 	// Using the SDK's default configuration, loading additional config
 	// and credentials values from the environment variables, shared
 	// credentials, and shared configuration files
-	cfg, err := external.LoadDefaultAWSConfig()
-	if err != nil {
-		panic("unable to load SDK config, " + err.Error())
-	}
+	cfg := aws.NewConfig()
 
-	if cfg.Region == "" {
-		cfg.Region = aws.GetLocalRegion()
+	if aws.StringValue(cfg.Region) == "" {
+		cfg.Region = aws.String(util.GetLocalRegion())
 	}
 	fmt.Println("using AWS Region:", cfg.Region)
 
-	svc := sqs.New(cfg)
+	svc := sqs.New(session.Must(session.NewSession(cfg)))
 
 	// Initialize and create a Service Bus Queue named helloworld if it doesn't exist
 	queueName := os.Getenv("QUEUE")
@@ -35,10 +33,11 @@ func main() {
 	message := "Hello SQS."
 	fmt.Println("creating queue: ", queueName)
 
-	q, err := svc.CreateQueueRequest(&sqs.CreateQueueInput{
+	req, q := svc.CreateQueueRequest(&sqs.CreateQueueInput{
 		QueueName: &queueName,
-	}).Send(context.Background())
-	if err != nil {
+	})
+	req.SetContext(context.Background())
+	if err := req.Send(); req != nil {
 		// handle queue creation error
 		fmt.Println("create queue: ", err)
 	}
@@ -53,17 +52,17 @@ func main() {
 
 	for i := 1; i < 20000; i++ {
 		fmt.Println("sending message ", i)
-		result, err := svc.SendMessageRequest(&sqs.SendMessageInput{
+		req, resp := svc.SendMessageRequest(&sqs.SendMessageInput{
 			MessageBody: &message,
 			QueueUrl:    q.QueueUrl,
-		}).Send(context.Background())
-
-		if err != nil {
+		})
+		req.SetContext(context.Background())
+		if err := req.Send(); err != nil {
 			fmt.Println("Error", err)
 			return
 		}
 
-		fmt.Println("Success", *result.MessageId)
+		fmt.Println("Success", aws.StringValue(resp.MessageId))
 		//		time.Sleep(time.Duration(100) * time.Millisecond)
 	}
 

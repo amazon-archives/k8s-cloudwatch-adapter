@@ -5,9 +5,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/aws/external"
-	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/config"
 	"k8s.io/klog"
 )
@@ -17,46 +17,44 @@ func NewCloudWatchClient() Client {
 	// Using the SDK's default configuration, loading additional config
 	// and credentials values from the environment variables, shared
 	// credentials, and shared configuration files
-	cfg, err := external.LoadDefaultAWSConfig()
-	if err != nil {
-		panic("unable to load SDK config, " + err.Error())
-	}
+	cfg := aws.NewConfig()
 
 	// check if region is set
-	if cfg.Region == "" {
-		cfg.Region = GetLocalRegion()
+	if aws.StringValue(cfg.Region) == "" {
+		cfg.Region = aws.String(GetLocalRegion())
 	}
-	klog.Infof("using AWS Region: %s", cfg.Region)
+	klog.Infof("using AWS Region: %s", aws.StringValue(cfg.Region))
 
 	if os.Getenv("DEBUG") == "true" {
-		cfg.LogLevel = aws.LogDebugWithHTTPBody
+		cfg = cfg.WithLogLevel(aws.LogDebugWithHTTPBody)
 	}
 
 	// Using the Config value, create the CloudWatch client
-	svc := cloudwatch.New(cfg)
+	sess := session.Must(session.NewSession(cfg))
+	svc := cloudwatch.New(sess)
 	return &cloudwatchClient{client: svc}
 }
 
 type cloudwatchClient struct {
-	client *cloudwatch.Client
+	client *cloudwatch.CloudWatch
 }
 
-func (c *cloudwatchClient) Query(queries []config.MetricDataQuery) ([]cloudwatch.MetricDataResult, error) {
+func (c *cloudwatchClient) Query(queries []config.MetricDataQuery) ([]*cloudwatch.MetricDataResult, error) {
 	// If changing logic in this function ensure changes are duplicated in
 	// `pkg/controller.handleExternalMetric()`
-	cwMetricQueries := make([]cloudwatch.MetricDataQuery, len(queries))
+	cwMetricQueries := make([]*cloudwatch.MetricDataQuery, len(queries))
 	for i, q := range queries {
 		q := q
-		mdq := cloudwatch.MetricDataQuery{
+		mdq := &cloudwatch.MetricDataQuery{
 			Id:         &q.ID,
 			Label:      &q.Label,
 			ReturnData: &q.ReturnData,
 		}
 
 		if len(q.Expression) == 0 {
-			dimensions := make([]cloudwatch.Dimension, len(q.MetricStat.Metric.Dimensions))
+			dimensions := make([]*cloudwatch.Dimension, len(q.MetricStat.Metric.Dimensions))
 			for j, d := range q.MetricStat.Metric.Dimensions {
-				dimensions[j] = cloudwatch.Dimension{
+				dimensions[j] = &cloudwatch.Dimension{
 					Name:  &d.Name,
 					Value: &d.Value,
 				}
@@ -72,7 +70,7 @@ func (c *cloudwatchClient) Query(queries []config.MetricDataQuery) ([]cloudwatch
 				Metric: metric,
 				Period: &q.MetricStat.Period,
 				Stat:   &q.MetricStat.Stat,
-				Unit:   cloudwatch.StandardUnit(q.MetricStat.Unit),
+				Unit:   &q.MetricStat.Unit,
 			}
 		} else {
 			mdq.Expression = &q.Expression
@@ -87,7 +85,7 @@ func (c *cloudwatchClient) Query(queries []config.MetricDataQuery) ([]cloudwatch
 	return c.QueryCloudWatch(cwQuery)
 }
 
-func (c *cloudwatchClient) QueryCloudWatch(cwQuery cloudwatch.GetMetricDataInput) ([]cloudwatch.MetricDataResult, error) {
+func (c *cloudwatchClient) QueryCloudWatch(cwQuery cloudwatch.GetMetricDataInput) ([]*cloudwatch.MetricDataResult, error) {
 	now := time.Now()
 	endTime := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), 0, 0, now.Location())
 	// CloudWatch metrics have latency, we will grab in a 5 minute window and extract the latest value
@@ -95,13 +93,15 @@ func (c *cloudwatchClient) QueryCloudWatch(cwQuery cloudwatch.GetMetricDataInput
 
 	cwQuery.EndTime = &endTime
 	cwQuery.StartTime = &startTime
-	cwQuery.ScanBy = "TimestampDescending"
+	cwQuery.ScanBy = aws.String("TimestampDescending")
 
-	results, err := c.client.GetMetricDataRequest(&cwQuery).Send(context.Background())
-	if err != nil {
+	req, resp := c.client.GetMetricDataRequest(&cwQuery)
+	req.SetContext(context.Background())
+
+	if err := req.Send(); err != nil {
 		klog.Errorf("err: %v", err)
-		return []cloudwatch.MetricDataResult{}, err
+		return []*cloudwatch.MetricDataResult{}, err
 	}
 
-	return results.MetricDataResults, nil
+	return resp.MetricDataResults, nil
 }

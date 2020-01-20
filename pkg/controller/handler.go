@@ -3,7 +3,8 @@ package controller
 import (
 	"fmt"
 
-	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	listers "github.com/awslabs/k8s-cloudwatch-adapter/pkg/client/listers/metrics/v1alpha1"
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/metriccache"
 
@@ -70,19 +71,19 @@ func (h *Handler) handleExternalMetric(ns, name string, queueItem namespacedQueu
 
 	// If changing logic in this block ensure changes are duplicated in
 	// `pkg/client.Query()`
-	cwMetricQueries := make([]cloudwatch.MetricDataQuery, len(queries))
+	cwMetricQueries := make([]*cloudwatch.MetricDataQuery, len(queries))
 	for i, q := range queries {
 		q := q
-		mdq := cloudwatch.MetricDataQuery{
+		mdq := &cloudwatch.MetricDataQuery{
 			Id:         &q.ID,
 			Label:      &q.Label,
 			ReturnData: &q.ReturnData,
 		}
 
 		if len(q.Expression) == 0 {
-			dimensions := make([]cloudwatch.Dimension, len(q.MetricStat.Metric.Dimensions))
-			for j, _ := range q.MetricStat.Metric.Dimensions {
-				dimensions[j] = cloudwatch.Dimension{
+			dimensions := make([]*cloudwatch.Dimension, len(q.MetricStat.Metric.Dimensions))
+			for j := range q.MetricStat.Metric.Dimensions {
+				dimensions[j] = &cloudwatch.Dimension{
 					Name:  &q.MetricStat.Metric.Dimensions[j].Name,
 					Value: &q.MetricStat.Metric.Dimensions[j].Value,
 				}
@@ -98,7 +99,7 @@ func (h *Handler) handleExternalMetric(ns, name string, queueItem namespacedQueu
 				Metric: metric,
 				Period: &q.MetricStat.Period,
 				Stat:   &q.MetricStat.Stat,
-				Unit:   cloudwatch.StandardUnit(q.MetricStat.Unit),
+				Unit:   aws.String(q.MetricStat.Unit),
 			}
 		} else {
 			mdq.Expression = &q.Expression
