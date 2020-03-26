@@ -4,7 +4,7 @@ TEMP_DIR:=$(shell mktemp -d /tmp/$(IMAGE).XXXXXX)
 OUT_DIR?=./_output
 VENDOR_DOCKERIZED?=0
 
-VERSION?=latest
+VERSION:=$(or ${TRAVIS_TAG},${TRAVIS_TAG},latest)
 GOIMAGE=golang:1.13
 GOFLAGS=-mod=vendor -tags=netgo
 
