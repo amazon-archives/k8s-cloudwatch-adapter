@@ -147,19 +147,6 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: k8s-cloudwatch-adapter:custom-metrics-reader
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: k8s-cloudwatch-adapter:custom-metrics-reader
-subjects:
-- kind: ServiceAccount
-  name: horizontal-pod-autoscaler
-  namespace: kube-system
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
   name: k8s-cloudwatch-adapter:external-metrics-reader
 roleRef:
   apiGroup: rbac.authorization.k8s.io

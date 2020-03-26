@@ -55,16 +55,13 @@ $ kubectl apply -f https://raw.githubusercontent.com/awslabs/k8s-cloudwatch-adap
 namespace/custom-metrics created
 clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:system:auth-delegator created
 rolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter-auth-reader created
-deployment.apps/k8s-cloudwatch-adapter configured
+deployment.apps/k8s-cloudwatch-adapter created
 clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter-resource-reader created
 serviceaccount/k8s-cloudwatch-adapter created
 service/k8s-cloudwatch-adapter created
-apiservice.apiregistration.k8s.io/v1beta1.custom.metrics.k8s.io created
 apiservice.apiregistration.k8s.io/v1beta1.external.metrics.k8s.io created
-clusterrole.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:custom-metrics-reader created
 clusterrole.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:external-metrics-reader created
 clusterrole.rbac.authorization.k8s.io/k8s-cloudwatch-adapter-resource-reader created
-clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:custom-metrics-reader created
 clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:external-metrics-reader created
 customresourcedefinition.apiextensions.k8s.io/externalmetrics.metrics.aws created
 clusterrole.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:crd-metrics-reader created
