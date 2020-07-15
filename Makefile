@@ -5,7 +5,7 @@ OUT_DIR?=./_output
 VENDOR_DOCKERIZED?=0
 
 VERSION:=$(or ${TRAVIS_TAG},${TRAVIS_TAG},latest)
-GOIMAGE=golang:1.13
+GOIMAGE=golang:1.14
 GOFLAGS=-mod=vendor -tags=netgo
 
 .PHONY: all docker-build push test build-local-image
