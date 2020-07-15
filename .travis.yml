@@ -7,7 +7,7 @@ go:
 git:
   depth: 1
 
-script: make docker-build
+script: make docker-build VERSION=$TRAVIS_TAG
 
 sudo: required
 services:
