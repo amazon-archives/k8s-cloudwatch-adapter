@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/NYTimes/gziphandler v1.0.1 // indirect
-	github.com/aws/aws-sdk-go v1.28.5
+	github.com/aws/aws-sdk-go v1.33.5
 	github.com/emicklei/go-restful-swagger12 v0.0.0-20170208215640-dcef7f557305 // indirect
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
 	github.com/googleapis/gnostic v0.2.0 // indirect
@@ -16,7 +16,7 @@ require (
 	github.com/kubernetes-incubator/custom-metrics-apiserver v0.0.0-20190918110929-3d9be26a50eb
 	github.com/onsi/ginkgo v1.10.3 // indirect
 	github.com/onsi/gomega v1.7.1 // indirect
-	github.com/pkg/errors v0.8.1
+	github.com/pkg/errors v0.9.1
 	go.uber.org/zap v1.12.0 // indirect
 	google.golang.org/appengine v1.6.0 // indirect
 	gopkg.in/yaml.v2 v2.2.4
