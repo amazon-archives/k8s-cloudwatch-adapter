@@ -51,7 +51,7 @@ spec:
       serviceAccountName: k8s-cloudwatch-adapter
       containers:
       - name: k8s-cloudwatch-adapter
-        image: chankh/k8s-cloudwatch-adapter:v0.8.0
+        image: chankh/k8s-cloudwatch-adapter:v0.9.0
         args:
         - /adapter
         - --cert-dir=/tmp
