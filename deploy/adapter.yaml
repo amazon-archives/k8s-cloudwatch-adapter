@@ -57,7 +57,7 @@ spec:
         - --cert-dir=/tmp
         - --secure-port=6443
         - --logtostderr=true
-        - --v=10
+        - --v=2
         ports:
         - containerPort: 6443
           name: https
