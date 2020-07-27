@@ -67,7 +67,7 @@ spec:
           dimensions:
             - name: QueueName
               value: "helloworld"
-        period: 300
+        period: 60
         stat: Average
         unit: Count
       returnData: true
@@ -93,8 +93,8 @@ $ ./bin/producer
 ```
 
 On a separate terminal, you can now watch your HPA retrieving the queue length and start scaling the
-replicas. This will take several minutes due to the fact that Amazon SQS metrics are generated at 5
-minutes interval.
+replicas. Amazon SQS now supports metrics at 1-minute interval, so you should start to see the
+deployment scale pretty quickly.
 
 ```bash
 $ kubectl get hpa sqs-consumer-scaler -w

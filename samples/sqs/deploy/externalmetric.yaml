@@ -15,7 +15,7 @@ spec:
           dimensions:
             - name: QueueName
               value: "helloworld"
-        period: 300
+        period: 60
         stat: Average
         unit: Count
       returnData: true
