@@ -104,9 +104,9 @@ func (c *Controller) processNextItem() bool {
 
 	err := c.metricHandler.Process(queueItem)
 	if err != nil {
-		retrys := c.metricQueue.NumRequeues(rawItem)
-		if retrys < 5 {
-			klog.Errorf("Transient error with %d retrys for key %s: %s", retrys, rawItem, err)
+		retries := c.metricQueue.NumRequeues(rawItem)
+		if retries < 5 {
+			klog.Errorf("Transient error with %d retries for key %s: %s", retries, rawItem, err)
 			c.metricQueue.AddRateLimited(rawItem)
 			return true
 		}

@@ -79,7 +79,7 @@ func main() {
 
 	cache := metriccache.NewMetricCache()
 
-	// start and run ctrl components
+	// start and run controller components
 	ctrl, adapterInformerFactory := cmd.newController(cache)
 	go adapterInformerFactory.Start(stopCh)
 	go ctrl.Run(2, time.Second, stopCh)
