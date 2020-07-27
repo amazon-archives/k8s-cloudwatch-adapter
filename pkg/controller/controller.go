@@ -29,7 +29,7 @@ func NewController(externalMetricInformer informers.ExternalMetricInformer, metr
 		metricHandler:        metricHandler,
 	}
 
-	// wire up enque step.  This provides a hook for testing enqueue step
+	// wire up enqueue step. This provides a hook for testing enqueue step
 	controller.enqueuer = controller.enqueueExternalMetric
 
 	klog.Info("Setting up external metric event handlers")

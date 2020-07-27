@@ -19,7 +19,7 @@ $(OUT_DIR)/adapter: $(src_deps)
 docker-build: verify-apis test
 	cp deploy/Dockerfile $(TEMP_DIR)/Dockerfile
 
-	docker run -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/awslabs/k8s-cloudwatch-adapter -e GOARCH=amd64 -e GOFLAGS="$(GOFLAGS)" -w /go/src/github.com/awslabs/k8s-cloudwatch-adapter $(GOIMAGE) /bin/bash -c "\
+	docker run --rm -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/awslabs/k8s-cloudwatch-adapter -e GOARCH=amd64 -e GOFLAGS="$(GOFLAGS)" -w /go/src/github.com/awslabs/k8s-cloudwatch-adapter $(GOIMAGE) /bin/bash -c "\
 		CGO_ENABLED=0 GO111MODULE=on go build -o /build/adapter cmd/adapter/adapter.go"
 
 	docker build -t $(REGISTRY)/$(IMAGE):$(VERSION) $(TEMP_DIR)
@@ -44,7 +44,7 @@ else
 endif
 
 test:
-	CGO_ENABLED=0 GO111MODULE=on go test ./pkg/...
+	CGO_ENABLED=0 GO111MODULE=on go test -cover ./pkg/...
 
 clean:
 	rm -rf ${OUT_DIR} vendor

@@ -27,6 +27,12 @@ type MetricSeriesSpec struct {
 	// Name specifies the series name.
 	Name string `json:"name"`
 
+	// RoleARN indicate the ARN of IAM role to assume, this metric will be retrieved using this role.
+	RoleARN string `json:"roleArn"`
+
+	// Region specifies the region where metrics should be retrieved.
+	Region string `json:"region"`
+
 	// Queries specify the CloudWatch metrics query to retrieve data for this series.
 	Queries []MetricDataQuery `json:"queries"`
 }

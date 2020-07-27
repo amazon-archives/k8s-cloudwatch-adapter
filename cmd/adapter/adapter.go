@@ -24,12 +24,12 @@ type CloudWatchAdapter struct {
 	basecmd.AdapterBase
 }
 
-func (a *CloudWatchAdapter) makeCloudWatchClient() (aws.Client, error) {
-	client := aws.NewCloudWatchClient()
-	return client, nil
+func (a *CloudWatchAdapter) makeCloudWatchManager() (aws.CloudWatchManager, error) {
+	manager := aws.NewCloudWatchManager()
+	return manager, nil
 }
 
-func (a *CloudWatchAdapter) newController(metriccache *metriccache.MetricCache) (*controller.Controller, informers.SharedInformerFactory) {
+func (a *CloudWatchAdapter) newController(cache *metriccache.MetricCache) (*controller.Controller, informers.SharedInformerFactory) {
 	clientConfig, err := a.ClientConfig()
 	if err != nil {
 		klog.Fatalf("unable to construct client config: %v", err)
@@ -42,14 +42,14 @@ func (a *CloudWatchAdapter) newController(metriccache *metriccache.MetricCache) 
 	adapterInformerFactory := informers.NewSharedInformerFactory(adapterClientSet, time.Second*30)
 	handler := controller.NewHandler(
 		adapterInformerFactory.Metrics().V1alpha1().ExternalMetrics().Lister(),
-		metriccache)
+		cache)
 
-	controller := controller.NewController(adapterInformerFactory.Metrics().V1alpha1().ExternalMetrics(), &handler)
+	ctrl := controller.NewController(adapterInformerFactory.Metrics().V1alpha1().ExternalMetrics(), &handler)
 
-	return controller, adapterInformerFactory
+	return ctrl, adapterInformerFactory
 }
 
-func (a *CloudWatchAdapter) makeProvider(cwClient aws.Client, metriccache *metriccache.MetricCache) (provider.ExternalMetricsProvider, error) {
+func (a *CloudWatchAdapter) makeProvider(cwManager aws.CloudWatchManager, cache *metriccache.MetricCache) (provider.ExternalMetricsProvider, error) {
 	client, err := a.DynamicClient()
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to construct Kubernetes client")
@@ -60,7 +60,7 @@ func (a *CloudWatchAdapter) makeProvider(cwClient aws.Client, metriccache *metri
 		return nil, errors.Wrap(err, "unable to construct RESTMapper")
 	}
 
-	cwProvider := cwprov.NewCloudWatchProvider(client, mapper, cwClient, metriccache)
+	cwProvider := cwprov.NewCloudWatchProvider(client, mapper, cwManager, cache)
 	return cwProvider, nil
 }
 
@@ -70,28 +70,28 @@ func main() {
 
 	// set up flags
 	cmd := &CloudWatchAdapter{}
-	cmd.Name = "cloudwatch-metrics-adapter"
+	cmd.Name = "k8s-cloudwatch-adapter"
 	cmd.Flags().AddGoFlagSet(flag.CommandLine) // make sure we get the klog flags
 	cmd.Flags().Parse(os.Args)
 
 	stopCh := make(chan struct{})
 	defer close(stopCh)
 
-	metriccache := metriccache.NewMetricCache()
+	cache := metriccache.NewMetricCache()
 
-	// start and run contoller components
-	controller, adapterInformerFactory := cmd.newController(metriccache)
+	// start and run ctrl components
+	ctrl, adapterInformerFactory := cmd.newController(cache)
 	go adapterInformerFactory.Start(stopCh)
-	go controller.Run(2, time.Second, stopCh)
+	go ctrl.Run(2, time.Second, stopCh)
 
 	// create CloudWatch client
-	cwClient, err := cmd.makeCloudWatchClient()
+	cwClient, err := cmd.makeCloudWatchManager()
 	if err != nil {
 		klog.Fatalf("unable to construct CloudWatch client: %v", err)
 	}
 
 	// construct the provider
-	cwProvider, err := cmd.makeProvider(cwClient, metriccache)
+	cwProvider, err := cmd.makeProvider(cwClient, cache)
 	if err != nil {
 		klog.Fatalf("unable to construct CloudWatch metrics provider: %v", err)
 	}
