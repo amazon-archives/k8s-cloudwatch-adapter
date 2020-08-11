@@ -1,7 +1,7 @@
 package v1alpha1
 
 import (
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // +genclient
@@ -12,11 +12,11 @@ import (
 // ExternalMetric describes a ExternalMetric resource
 type ExternalMetric struct {
 	// TypeMeta is the metadata for the resource, like kind and apiversion
-	meta_v1.TypeMeta `json:",inline"`
+	metav1.TypeMeta `json:",inline"`
 
 	// ObjectMeta contains the metadata for the particular object (name, namespace, self link,
 	// labels, etc)
-	meta_v1.ObjectMeta `json:"metadata,omitempty"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
 
 	// Spec is the custom resource spec
 	Spec MetricSeriesSpec `json:"spec"`
@@ -134,8 +134,8 @@ type Dimension struct {
 
 // ExternalMetricList is a list of ExternalMetric resources
 type ExternalMetricList struct {
-	meta_v1.TypeMeta `json:",inline"`
-	meta_v1.ListMeta `json:"metadata"`
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata"`
 
 	Items []ExternalMetric `json:"items"`
 }

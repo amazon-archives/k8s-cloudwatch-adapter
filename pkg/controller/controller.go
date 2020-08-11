@@ -58,7 +58,7 @@ func (c *Controller) Run(numberOfWorkers int, interval time.Duration, stopCh <-c
 
 	// do the initial synchronization (one time) to populate resources
 	if !cache.WaitForCacheSync(stopCh, c.externalMetricSynced) {
-		runtime.HandleError(fmt.Errorf("Error syncing controller cache"))
+		runtime.HandleError(fmt.Errorf("error syncing controller cache"))
 		return
 	}
 

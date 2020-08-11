@@ -28,7 +28,7 @@ func TestExternalMetricValueIsStored(t *testing.T) {
 	storeObjects = append(storeObjects, externalMetric)
 	externalMetricsListerCache = append(externalMetricsListerCache, externalMetric)
 
-	handler, metriccache := newHandler(storeObjects, externalMetricsListerCache)
+	handler, cache := newHandler(storeObjects, externalMetricsListerCache)
 
 	queueItem := getExternalKey(externalMetric)
 	err := handler.Process(queueItem)
@@ -37,7 +37,7 @@ func TestExternalMetricValueIsStored(t *testing.T) {
 		t.Errorf("error after processing = %v, want %v", err, nil)
 	}
 
-	metricRequest, exists := metriccache.GetExternalMetric(externalMetric.Namespace, externalMetric.Name)
+	metricRequest, exists := cache.GetExternalMetric(externalMetric.Namespace, externalMetric.Name)
 
 	if exists == false {
 		t.Errorf("exist = %v, want %v", exists, true)
@@ -54,7 +54,7 @@ func TestShouldBeAbleToStoreCustomAndExternalWithSameNameAndNamespace(t *testing
 	storeObjects = append(storeObjects, externalMetric)
 	externalMetricsListerCache = append(externalMetricsListerCache, externalMetric)
 
-	handler, metriccache := newHandler(storeObjects, externalMetricsListerCache)
+	handler, cache := newHandler(storeObjects, externalMetricsListerCache)
 
 	externalItem := getExternalKey(externalMetric)
 	err := handler.Process(externalItem)
@@ -63,7 +63,7 @@ func TestShouldBeAbleToStoreCustomAndExternalWithSameNameAndNamespace(t *testing
 		t.Errorf("error after processing = %v, want %v", err, nil)
 	}
 
-	metricRequest, exists := metriccache.GetExternalMetric(externalMetric.Namespace, externalMetric.Name)
+	metricRequest, exists := cache.GetExternalMetric(externalMetric.Namespace, externalMetric.Name)
 
 	if exists == false {
 		t.Errorf("exist = %v, want %v", exists, true)
@@ -80,7 +80,7 @@ func TestShouldFailOnInvalidCacheKey(t *testing.T) {
 	storeObjects = append(storeObjects, externalMetric)
 	externalMetricsListerCache = append(externalMetricsListerCache, externalMetric)
 
-	handler, metriccache := newHandler(storeObjects, externalMetricsListerCache)
+	handler, cache := newHandler(storeObjects, externalMetricsListerCache)
 
 	queueItem := namespacedQueueItem{
 		namespaceKey: "invalidkey/with/extrainfo",
@@ -92,7 +92,7 @@ func TestShouldFailOnInvalidCacheKey(t *testing.T) {
 		t.Errorf("error after processing nil, want non nil")
 	}
 
-	_, exists := metriccache.GetExternalMetric(externalMetric.Namespace, externalMetric.Name)
+	_, exists := cache.GetExternalMetric(externalMetric.Namespace, externalMetric.Name)
 
 	if exists == true {
 		t.Errorf("exist = %v, want %v", exists, false)
@@ -106,11 +106,11 @@ func TestWhenExternalItemHasBeenDeleted(t *testing.T) {
 	externalMetric := newFullExternalMetric("test")
 
 	// don't put anything in the stores
-	handler, metriccache := newHandler(storeObjects, externalMetricsListerCache)
+	handler, cache := newHandler(storeObjects, externalMetricsListerCache)
 
 	// add the item to the cache then test if it gets deleted
 	queueItem := getExternalKey(externalMetric)
-	metriccache.Update(queueItem.Key(), "test", api.ExternalMetric{})
+	cache.Update(queueItem.Key(), "test", api.ExternalMetric{})
 
 	err := handler.Process(queueItem)
 
@@ -118,7 +118,7 @@ func TestWhenExternalItemHasBeenDeleted(t *testing.T) {
 		t.Errorf("error == %v, want nil", err)
 	}
 
-	_, exists := metriccache.GetExternalMetric(externalMetric.Namespace, externalMetric.Name)
+	_, exists := cache.GetExternalMetric(externalMetric.Namespace, externalMetric.Name)
 
 	if exists == true {
 		t.Errorf("exist = %v, want %v", exists, false)
@@ -130,7 +130,7 @@ func TestWhenItemKindIsUnknown(t *testing.T) {
 	var externalMetricsListerCache []*api.ExternalMetric
 
 	// don't put anything in the stores, as we are not looking anything up
-	handler, metriccache := newHandler(storeObjects, externalMetricsListerCache)
+	handler, cache := newHandler(storeObjects, externalMetricsListerCache)
 
 	// add the item to the cache then test if it gets deleted
 	queueItem := namespacedQueueItem{
@@ -144,7 +144,7 @@ func TestWhenItemKindIsUnknown(t *testing.T) {
 		t.Errorf("error == %v, want nil", err)
 	}
 
-	_, exists := metriccache.GetExternalMetric("default", "unknown")
+	_, exists := cache.GetExternalMetric("default", "unknown")
 
 	if exists == true {
 		t.Errorf("exist = %v, want %v", exists, false)
@@ -161,10 +161,10 @@ func newHandler(storeObjects []runtime.Object, externalMetricsListerCache []*api
 		i.Metrics().V1alpha1().ExternalMetrics().Informer().GetIndexer().Add(em)
 	}
 
-	metriccache := metriccache.NewMetricCache()
-	handler := NewHandler(externalMetricLister, metriccache)
+	cache := metriccache.NewMetricCache()
+	handler := NewHandler(externalMetricLister, cache)
 
-	return handler, metriccache
+	return handler, cache
 }
 
 func validateExternalMetricResult(metricRequest api.ExternalMetric, externalMetricInfo *api.ExternalMetric, t *testing.T) {

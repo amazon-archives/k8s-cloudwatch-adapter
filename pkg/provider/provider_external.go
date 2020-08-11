@@ -39,14 +39,13 @@ func (p *cloudwatchProvider) GetExternalMetric(namespace string, metricSelector 
 	} else {
 		quantity = *resource.NewQuantity(int64(aws.Float64Value(metricValue[0].Values[0])), resource.DecimalSI)
 	}
-	externalmetric := external_metrics.ExternalMetricValue{
+	externalMetricValue := external_metrics.ExternalMetricValue{
 		MetricName: info.Metric,
 		Value:      quantity,
 		Timestamp:  metav1.Now(),
 	}
 
-	matchingMetrics := []external_metrics.ExternalMetricValue{}
-	matchingMetrics = append(matchingMetrics, externalmetric)
+	matchingMetrics := []external_metrics.ExternalMetricValue{externalMetricValue}
 
 	return &external_metrics.ExternalMetricValueList{
 		Items: matchingMetrics,
@@ -58,7 +57,7 @@ func (p *cloudwatchProvider) ListAllExternalMetrics() []provider.ExternalMetricI
 	defer p.valuesLock.RUnlock()
 
 	// not implemented yet
-	externalMetricsInfo := []provider.ExternalMetricInfo{}
+	var externalMetricsInfo []provider.ExternalMetricInfo
 	for _, name := range p.metricCache.ListMetricNames() {
 		// only process if name is non-empty
 		if name != "" {

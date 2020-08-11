@@ -23,12 +23,10 @@ type cloudwatchProvider struct {
 
 // NewCloudWatchProvider returns an instance of cloudwatchProvider
 func NewCloudWatchProvider(client dynamic.Interface, mapper apimeta.RESTMapper, cwManager aws.CloudWatchManager, metricCache *metriccache.MetricCache) provider.ExternalMetricsProvider {
-	provider := &cloudwatchProvider{
+	return &cloudwatchProvider{
 		client:      client,
 		mapper:      mapper,
 		cwManager:   cwManager,
 		metricCache: metricCache,
 	}
-
-	return provider
 }
