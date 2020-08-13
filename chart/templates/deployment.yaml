@@ -32,10 +32,9 @@ spec:
         imagePullPolicy: "{{ .Values.image.pullPolicy }}"
         args:
         - /adapter
-        - --cert-dir=/tmp
-        - --secure-port=6443
-        - --logtostderr=true
-        - --v=2
+        {{- range $key, $val := .Values.adapter.args }}
+        - --{{ $key }}={{ $val }}
+        {{- end }}
         ports:
         - containerPort: 6443
           name: https
