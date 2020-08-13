@@ -1,0 +1,11 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  pullPolicy: IfNotPresent
+  tag: "v0.9.0"
+
+iam_role: ""  # e.g. "arn:aws:iam::012345678901:role/role-name"
