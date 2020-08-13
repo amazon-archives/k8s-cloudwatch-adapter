@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "{{ .Release.Name }}"
+  name: "{{ .Release.Name }}"
+  namespace: "{{ .Release.Namespace }}"
+  annotations:
+    {{- if .Values.iam_role }}
+    iam.amazonaws.com/role: {{ .Values.iam_role }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: "{{ .Release.Name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Release.Name }}"
+      name: "{{ .Release.Name }}"
+      namespace: "{{ .Release.Namespace }}"
+      annotations:
+        {{- if .Values.iam_role }}
+        iam.amazonaws.com/role: {{ .Values.iam_role }}
+        {{- end }}
+    spec:
+      serviceAccountName: "{{ .Release.Name }}"
+      containers:
+      - name: "{{ .Release.Name }}"
+        image: chankh/k8s-cloudwatch-adapter:{{ .Values.image.tag }}
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        args:
+        - /adapter
+        - --cert-dir=/tmp
+        - --secure-port=6443
+        - --logtostderr=true
+        - --v=2
+        ports:
+        - containerPort: 6443
+          name: https
+        - containerPort: 8080
+          name: http
+        volumeMounts:
+        - mountPath: /tmp
+          name: temp-vol
+      volumes:
+      - name: temp-vol
+        emptyDir: {}
