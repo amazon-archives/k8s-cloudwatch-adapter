@@ -5,10 +5,6 @@ metadata:
     app: "{{ .Release.Name }}"
   name: "{{ .Release.Name }}"
   namespace: "{{ .Release.Namespace }}"
-  annotations:
-    {{- if .Values.iam_role }}
-    iam.amazonaws.com/role: {{ .Values.iam_role }}
-    {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -20,10 +16,6 @@ spec:
         app: "{{ .Release.Name }}"
       name: "{{ .Release.Name }}"
       namespace: "{{ .Release.Namespace }}"
-      annotations:
-        {{- if .Values.iam_role }}
-        iam.amazonaws.com/role: {{ .Values.iam_role }}
-        {{- end }}
     spec:
       serviceAccountName: "{{ .Release.Name }}"
       containers:
