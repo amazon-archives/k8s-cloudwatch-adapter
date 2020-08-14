@@ -48,7 +48,7 @@ You can create an IAM policy using this template, and attach it to the role if y
 ## Deploy
 Requires a Kubernetes cluster with Metric Server deployed, Amazon EKS cluster is fine too.
 
-Now deploy the adapter to your Kubernetes cluster using Kustomize:
+Now deploy the adapter to your Kubernetes cluster:
 
 ```bash
 $ kubectl apply -f https://raw.githubusercontent.com/awslabs/k8s-cloudwatch-adapter/master/deploy/adapter.yaml
@@ -71,7 +71,19 @@ clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:crd-metrics-
 This creates a new namespace `custom-metrics` and deploys the necessary ClusterRole, Service Account,
 Role Binding, along with the deployment of the adapter.
 
-Alternatively the adapter can be deployed using the Helm chart in the `/chart` directory.
+Alternatively the adapter can be deployed using the Helm chart in the `/chart` directory:
+
+```bash
+$ helm install k8s-cloudwatch-adapter ./chart \
+>   --namespace custom-metrics \
+>   --create-namespace
+NAME: k8s-cloudwatch-adapter
+LAST DEPLOYED: Fri Aug 14 13:20:17 2020
+NAMESPACE: custom-metrics
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
 
 ### Verifying the deployment
 Next you can query the APIs to see if the adapter is deployed correctly by running:
