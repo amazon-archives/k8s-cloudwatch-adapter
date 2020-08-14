@@ -25,7 +25,7 @@ This adapter requires the following permissions to access metric data from Amazo
 - cloudwatch:GetMetricStatistics
 - cloudwatch:ListMetrics
 
-You can create an IAM policy using this template, and attach it to the role if you are using
+You can create an IAM policy using this template, and attach it to the [Service Account Role](https://docs.aws.amazon.com/eks/latest/userguide/specify-service-account-role.html) if you are using
 [kube2iam](https://github.com/jtblin/kube2iam).
 
 ```json
