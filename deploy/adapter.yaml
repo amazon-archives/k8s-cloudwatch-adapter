@@ -49,6 +49,8 @@ spec:
       name: k8s-cloudwatch-adapter
     spec:
       serviceAccountName: k8s-cloudwatch-adapter
+      securityContext:
+        fsGroup: 65534
       containers:
       - name: k8s-cloudwatch-adapter
         image: chankh/k8s-cloudwatch-adapter:v0.9.0
