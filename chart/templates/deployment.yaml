@@ -18,6 +18,8 @@ spec:
       namespace: "{{ .Release.Namespace }}"
     spec:
       serviceAccountName: "{{ .Release.Name }}"
+      securityContext:
+        fsGroup: 65534
       containers:
       - name: "{{ .Release.Name }}"
         image: chankh/k8s-cloudwatch-adapter:{{ .Values.image.tag }}

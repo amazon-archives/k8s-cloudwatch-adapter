@@ -22,11 +22,9 @@ metrics from AWS CloudWatch.
 ## Prerequsites
 This adapter requires the following permissions to access metric data from Amazon CloudWatch.
 - cloudwatch:GetMetricData
-- cloudwatch:GetMetricStatistics
-- cloudwatch:ListMetrics
 
 You can create an IAM policy using this template, and attach it to the [Service Account Role](https://docs.aws.amazon.com/eks/latest/userguide/specify-service-account-role.html) if you are using
-[kube2iam](https://github.com/jtblin/kube2iam).
+[IAM Roles for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
 
 ```json
 {
@@ -35,9 +33,7 @@ You can create an IAM policy using this template, and attach it to the [Service 
         {
             "Effect": "Allow",
             "Action": [
-                "cloudwatch:GetMetricData",
-                "cloudwatch:GetMetricStatistics",
-                "cloudwatch:ListMetrics"
+                "cloudwatch:GetMetricData"
             ],
             "Resource": "*"
         }
