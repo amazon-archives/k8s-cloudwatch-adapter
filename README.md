@@ -67,10 +67,10 @@ clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:crd-metrics-
 This creates a new namespace `custom-metrics` and deploys the necessary ClusterRole, Service Account,
 Role Binding, along with the deployment of the adapter.
 
-Alternatively the adapter can be deployed using the Helm chart in the `/chart` directory:
+Alternatively the adapter can be deployed using the Helm chart in the `/charts` directory:
 
 ```bash
-$ helm install k8s-cloudwatch-adapter ./chart/k8s-cloudwatch-adapter \
+$ helm install k8s-cloudwatch-adapter ./charts/k8s-cloudwatch-adapter \
 >   --namespace custom-metrics \
 >   --create-namespace
 NAME: k8s-cloudwatch-adapter
