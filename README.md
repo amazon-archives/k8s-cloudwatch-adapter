@@ -70,7 +70,7 @@ Role Binding, along with the deployment of the adapter.
 Alternatively the adapter can be deployed using the Helm chart in the `/chart` directory:
 
 ```bash
-$ helm install k8s-cloudwatch-adapter ./chart \
+$ helm install k8s-cloudwatch-adapter ./chart/k8s-cloudwatch-adapter \
 >   --namespace custom-metrics \
 >   --create-namespace
 NAME: k8s-cloudwatch-adapter
