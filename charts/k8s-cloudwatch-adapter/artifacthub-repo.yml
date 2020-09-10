@@ -1,0 +1,5 @@
+# Artifact Hub repository metadata file
+repositoryID: 6663bcdc-201f-4159-ad85-c5caa4da9fc3
+owners: # (optional, used to claim repository ownership)
+  - name: Kwunhok Chan
+    email: khchan@amazon.com
