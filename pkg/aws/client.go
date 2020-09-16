@@ -18,13 +18,16 @@ import (
 )
 
 func NewCloudWatchManager() CloudWatchManager {
-	return &cloudwatchManager{}
+	return &cloudwatchManager{
+		localRegion: GetLocalRegion(),
+	}
 }
 
 type cloudwatchManager struct {
+	localRegion string
 }
 
-func (c *cloudwatchManager) getClient(role, region string) *cloudwatch.CloudWatch {
+func (c *cloudwatchManager) getClient(role, region *string) *cloudwatch.CloudWatch {
 	// Using the Config value, create the CloudWatch client
 	sess := session.Must(session.NewSession())
 
@@ -34,17 +37,17 @@ func (c *cloudwatchManager) getClient(role, region string) *cloudwatch.CloudWatc
 	cfg := aws.NewConfig().WithSTSRegionalEndpoint(endpoints.RegionalSTSEndpoint)
 
 	// check if roleARN is passed
-	if role != "" {
-		creds := stscreds.NewCredentials(sess, role)
+	if role != nil {
+		creds := stscreds.NewCredentials(sess, *role)
 		cfg = cfg.WithCredentials(creds)
-		klog.Infof("using IAM role ARN: %s", role)
+		klog.Infof("using IAM role ARN: %s", *role)
 	}
 
 	// check if region is set
-	if region != "" {
-		cfg = cfg.WithRegion(region)
+	if region != nil {
+		cfg = cfg.WithRegion(*region)
 	} else if aws.StringValue(cfg.Region) == "" {
-		cfg.Region = aws.String(GetLocalRegion())
+		cfg.Region = aws.String(c.localRegion)
 	}
 	klog.Infof("using AWS Region: %s", aws.StringValue(cfg.Region))
 

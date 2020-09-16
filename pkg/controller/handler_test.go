@@ -174,12 +174,12 @@ func validateExternalMetricResult(metricRequest api.ExternalMetric, externalMetr
 		t.Errorf("metricRequest Name = %s, want %s", spec.Name, wantSpec.Name)
 	}
 
-	if spec.RoleARN != wantSpec.RoleARN {
-		t.Errorf("metricRequest RoleArn = %s, want %s", spec.RoleARN, wantSpec.Name)
+	if *spec.RoleARN != *wantSpec.RoleARN {
+		t.Errorf("metricRequest RoleArn = %s, want %s", *spec.RoleARN, *wantSpec.RoleARN)
 	}
 
-	if spec.Region != wantSpec.Region {
-		t.Errorf("metricRequest Region = %s, want %s", spec.Region, wantSpec.Region)
+	if *spec.Region != *wantSpec.Region {
+		t.Errorf("metricRequest Region = %s, want %s", *spec.Region, *wantSpec.Region)
 	}
 	// Metric Queries
 	if len(spec.Queries) != len(wantSpec.Queries) {
@@ -248,6 +248,10 @@ func validateExternalMetricResult(metricRequest api.ExternalMetric, externalMetr
 }
 
 func newFullExternalMetric(name string) *api.ExternalMetric {
+	role := "MyRoleARN"
+	region := "region"
+	returnDataTrue := true
+	returnDataFalse := false
 	return &api.ExternalMetric{
 		TypeMeta: metav1.TypeMeta{APIVersion: api.SchemeGroupVersion.String(), Kind: "ExternalMetric"},
 		ObjectMeta: metav1.ObjectMeta{
@@ -256,8 +260,8 @@ func newFullExternalMetric(name string) *api.ExternalMetric {
 		},
 		Spec: api.MetricSeriesSpec{
 			Name:    "Name",
-			RoleARN: "MyRoleARN",
-			Region:  "Region",
+			RoleARN: &role,
+			Region:  &region,
 			Queries: []api.MetricDataQuery{
 				{
 					ID:         "query1",
@@ -278,7 +282,7 @@ func newFullExternalMetric(name string) *api.ExternalMetric {
 						Stat:   "Average",
 						Unit:   "Bytes",
 					},
-					ReturnData: true,
+					ReturnData: &returnDataTrue,
 				},
 				{
 					ID: "query3",
@@ -299,7 +303,7 @@ func newFullExternalMetric(name string) *api.ExternalMetric {
 						Stat:   "Sum",
 						Unit:   "Count",
 					},
-					ReturnData: false,
+					ReturnData: &returnDataFalse,
 				},
 			},
 		},

@@ -74,13 +74,17 @@ func TestToCloudWatchQuery(t *testing.T) {
 			}
 		}
 
-		if *q.ReturnData != wantQueries.ReturnData {
+		if q.ReturnData != wantQueries.ReturnData {
 			t.Errorf("metricRequest ReturnData = %v, want %v", *q.ReturnData, wantQueries.ReturnData)
 		}
 	}
 }
 
 func newFullExternalMetric(name string) *api.ExternalMetric {
+	role := "MyRoleARN"
+	region := "Region"
+	returnDataTrue := true
+	returnDataFalse := false
 	return &api.ExternalMetric{
 		TypeMeta: metav1.TypeMeta{APIVersion: api.SchemeGroupVersion.String(), Kind: "ExternalMetric"},
 		ObjectMeta: metav1.ObjectMeta{
@@ -89,8 +93,8 @@ func newFullExternalMetric(name string) *api.ExternalMetric {
 		},
 		Spec: api.MetricSeriesSpec{
 			Name:    "Name",
-			RoleARN: "MyRoleARN",
-			Region:  "Region",
+			RoleARN: &role,
+			Region:  &region,
 			Queries: []api.MetricDataQuery{
 				{
 					ID:         "query1",
@@ -111,7 +115,7 @@ func newFullExternalMetric(name string) *api.ExternalMetric {
 						Stat:   "Average",
 						Unit:   "Bytes",
 					},
-					ReturnData: true,
+					ReturnData: &returnDataTrue,
 				},
 				{
 					ID: "query3",
@@ -132,7 +136,7 @@ func newFullExternalMetric(name string) *api.ExternalMetric {
 						Stat:   "Sum",
 						Unit:   "Count",
 					},
-					ReturnData: false,
+					ReturnData: &returnDataFalse,
 				},
 			},
 		},

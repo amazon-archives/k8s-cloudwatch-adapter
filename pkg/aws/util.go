@@ -35,10 +35,11 @@ func toCloudWatchQuery(externalMetric *v1alpha1.ExternalMetric) cloudwatch.GetMe
 	cwMetricQueries := make([]*cloudwatch.MetricDataQuery, len(queries))
 	for i, q := range queries {
 		q := q
+		returnData := &q.ReturnData
 		mdq := &cloudwatch.MetricDataQuery{
 			Id:         &q.ID,
 			Label:      &q.Label,
-			ReturnData: &q.ReturnData,
+			ReturnData: *returnData,
 		}
 
 		if len(q.Expression) == 0 {

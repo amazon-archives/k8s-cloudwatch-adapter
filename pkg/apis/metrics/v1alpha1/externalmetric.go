@@ -28,10 +28,10 @@ type MetricSeriesSpec struct {
 	Name string `json:"name"`
 
 	// RoleARN indicate the ARN of IAM role to assume, this metric will be retrieved using this role.
-	RoleARN string `json:"roleArn"`
+	RoleARN *string `json:"roleArn,omitempty"`
 
 	// Region specifies the region where metrics should be retrieved.
-	Region string `json:"region"`
+	Region *string `json:"region,omitempty"`
 
 	// Queries specify the CloudWatch metrics query to retrieve data for this series.
 	Queries []MetricDataQuery `json:"queries"`
@@ -39,10 +39,6 @@ type MetricSeriesSpec struct {
 
 // MetricDataQuery represents the query structure used in GetMetricData operation to CloudWatch API.
 type MetricDataQuery struct {
-	// Resources specifies how associated Kubernetes resources should be discovered for
-	// the given metrics.
-	Resources string `json:"resources"`
-
 	// The math expression to be performed on the returned data, if this structure
 	// is performing a math expression. For more information about metric math expressions,
 	// see Metric Math Syntax and Functions (http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html#metric-math-syntax)
@@ -50,7 +46,7 @@ type MetricDataQuery struct {
 	//
 	// Within one MetricDataQuery structure, you must specify either Expression
 	// or MetricStat but not both.
-	Expression string `json:"expression"`
+	Expression string `json:"expression,omitempty"`
 
 	// A short name used to tie this structure to the results in the response. This
 	// name must be unique within a single call to GetMetricData. If you are performing
@@ -80,7 +76,7 @@ type MetricDataQuery struct {
 	// If you are performing this call just to do math expressions and do not also
 	// need the raw data returned, you can specify False. If you omit this, the
 	// default of True is used.
-	ReturnData bool `json:"returnData"`
+	ReturnData *bool `json:"returnData,omitempty"`
 }
 
 // MetricStat defines the metric to be returned, along with the statistics, period, and units.
