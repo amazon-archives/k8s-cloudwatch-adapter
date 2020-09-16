@@ -87,7 +87,11 @@ $ kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1" | jq .
 
 ## Deploying the sample application
 There is a sample SQS application provided in this repository for you to test how the adapter works.
-Refer to this [guide](samples/sqs/README.md)
+Refer to this [guide](samples/sqs/README.md).
+
+## More docs
+- [Configuring cross account metric example](docs/cross-account.md)
+- [ExternalMetric CRD schema](docs/schema.md)
 
 ## License
 
