@@ -19,7 +19,7 @@ This adapter allows you to scale your Kubernetes deployment using the [Horizonta
 Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) (HPA) with
 metrics from AWS CloudWatch.
 
-## Prerequsites
+## Prerequisites
 This adapter requires the following permissions to access metric data from Amazon CloudWatch.
 - cloudwatch:GetMetricData
 - cloudwatch:GetMetricStatistics
