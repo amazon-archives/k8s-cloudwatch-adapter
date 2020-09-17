@@ -2,13 +2,13 @@ apiVersion: v1
 entries:
   k8s-cloudwatch-adapter:
   - apiVersion: v2
-    appVersion: 0.9.0
-    created: "2020-09-10T12:07:28.083449+08:00"
+    appVersion: 0.10.0
+    created: "2020-09-17T16:59:41.411286+08:00"
     description: A Helm chart for Kubernetes
-    digest: c3daa7d08c11d82d8474f39ed4251e0a9af07be00f586080bbd5d19f651b3694
+    digest: 76e9e3e1d0d10cf0f8b8db9251b24d0bffa7374026cffba0588afd7c0e195c4b
     name: k8s-cloudwatch-adapter
     type: application
     urls:
     - https://awslabs.github.io/k8s-cloudwatch-adapter/charts/k8s-cloudwatch-adapter/k8s-cloudwatch-adapter-0.2.0.tgz
     version: 0.2.0
-generated: "2020-09-10T12:07:28.081259+08:00"
+generated: "2020-09-17T16:59:41.406761+08:00"
