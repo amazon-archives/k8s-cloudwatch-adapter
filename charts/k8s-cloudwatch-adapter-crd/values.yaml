@@ -1,0 +1,7 @@
+serviceAccount:
+  # defaults to k8s-cloudwatch-adapter
+  name:
+
+## Labels to be added to the adapter Deployment
+##
+labels: {}
