@@ -34,7 +34,6 @@ script:
   - docker version
   - docker buildx version
   - docker buildx ls
-  - docker buildx rm builder
   - docker buildx create --name builder --driver docker-container --use
   - docker buildx inspect --bootstrap
   - make docker-multiarch TRAVIS_TAG=$TRAVIS_TAG
