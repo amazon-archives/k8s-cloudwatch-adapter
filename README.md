@@ -70,7 +70,7 @@ Role Binding, along with the deployment of the adapter.
 Alternatively the crd and adapter can be deployed using the Helm chart in the `/charts` directory:
 
 ```bash
-$ helm install k8s-cloudwatch-adapte-crd ./charts/k8s-cloudwatch-adapter-crd
+$ helm install k8s-cloudwatch-adapter-crd ./charts/k8s-cloudwatch-adapter-crd
 NAME: k8s-cloudwatch-adapter-crd
 LAST DEPLOYED: Thu Sep 17 11:36:53 2020
 NAMESPACE: default
