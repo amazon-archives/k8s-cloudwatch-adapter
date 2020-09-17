@@ -1,0 +1,5 @@
+name: k8s-cloudwatch-adapter-crd
+description: Helm chart for Kubernetes metrics adapter crd for Amazon CloudWatch
+type: library
+version: 0.1.0
+appVersion: 0.10.0
