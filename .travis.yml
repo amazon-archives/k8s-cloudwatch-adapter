@@ -36,4 +36,4 @@ script:
   - docker buildx ls
   - docker buildx create --name builder --driver docker-container --use
   - docker buildx inspect --bootstrap
-  - make docker-multiarch TRAVIS_TAG=$TRAVIS_TAG
+  - travis_wait 60 make docker-multiarch TRAVIS_TAG=$TRAVIS_TAG
