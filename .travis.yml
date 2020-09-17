@@ -1,24 +1,32 @@
 language: go
 
+dist: bionic
+
+env:
+  - DOCKER_CLI_EXPERIMENTAL=enabled
+
 go:
-- "1.14.x"
+  - "1.14.x"
 
 # Only clone the most recent commit.
 git:
   depth: 1
 
-script: make docker-build TRAVIS_TAG=$TRAVIS_TAG
-
 sudo: required
 services:
-- docker
+  - docker
 
-deploy:
-- provider: script
-  script: bash .travis-push.sh
-  on:
-    branch: master
-- provider: script
-  script: bash .travis-push.sh
-  on:
-    tags: true
+before_install:
+  - sudo rm -rf /var/lib/apt/lists/*
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - lsb_release -cs
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) edge"
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+
+script:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker version
+  - docker buildx create --use
+  - make docker-multiarch TRAVIS_TAG=$TRAVIS_TAG
