@@ -22,11 +22,9 @@ metrics from AWS CloudWatch.
 ## Prerequisites
 This adapter requires the following permissions to access metric data from Amazon CloudWatch.
 - cloudwatch:GetMetricData
-- cloudwatch:GetMetricStatistics
-- cloudwatch:ListMetrics
 
-You can create an IAM policy using this template, and attach it to the role if you are using
-[kube2iam](https://github.com/jtblin/kube2iam). 
+You can create an IAM policy using this template, and attach it to the [Service Account Role](https://docs.aws.amazon.com/eks/latest/userguide/specify-service-account-role.html) if you are using
+[IAM Roles for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
 
 ```json
 {
@@ -35,9 +33,7 @@ You can create an IAM policy using this template, and attach it to the role if y
         {
             "Effect": "Allow",
             "Action": [
-                "cloudwatch:GetMetricData",
-                "cloudwatch:GetMetricStatistics",
-                "cloudwatch:ListMetrics"
+                "cloudwatch:GetMetricData"
             ],
             "Resource": "*"
         }
@@ -48,7 +44,7 @@ You can create an IAM policy using this template, and attach it to the role if y
 ## Deploy
 Requires a Kubernetes cluster with Metric Server deployed, Amazon EKS cluster is fine too.
 
-Now deploy the adapter to your Kubernetes cluster.
+Now deploy the adapter to your Kubernetes cluster:
 
 ```bash
 $ kubectl apply -f https://raw.githubusercontent.com/awslabs/k8s-cloudwatch-adapter/master/deploy/adapter.yaml
@@ -70,6 +66,20 @@ clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:crd-metrics-
 
 This creates a new namespace `custom-metrics` and deploys the necessary ClusterRole, Service Account,
 Role Binding, along with the deployment of the adapter.
+
+Alternatively the adapter can be deployed using the Helm chart in the `/charts` directory:
+
+```bash
+$ helm install k8s-cloudwatch-adapter ./charts/k8s-cloudwatch-adapter \
+>   --namespace custom-metrics \
+>   --create-namespace
+NAME: k8s-cloudwatch-adapter
+LAST DEPLOYED: Fri Aug 14 13:20:17 2020
+NAMESPACE: custom-metrics
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
 
 ### Verifying the deployment
 Next you can query the APIs to see if the adapter is deployed correctly by running:
@@ -95,7 +105,7 @@ Refer to this [guide](samples/sqs/README.md).
 
 ## License
 
-This library is licensed under the Apache 2.0 License. 
+This library is licensed under the Apache 2.0 License.
 
 ## Issues
 Report any issues in the [Github Issues](https://github.com/awslabs/k8s-cloudwatch-adapter/issues)

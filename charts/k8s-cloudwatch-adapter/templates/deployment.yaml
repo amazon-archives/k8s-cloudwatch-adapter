@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "k8s-cloudwatch-adapter.labels" . | nindent 4 }}
+    {{- with .Values.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  name: {{ include "k8s-cloudwatch-adapter.fullname" . }}
+  {{- if .Values.annotations }}
+  annotations: {{ toYaml .Values.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "k8s-cloudwatch-adapter.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- if .Values.podAnnotations }}
+        annotations: {{ toYaml .Values.podAnnotations | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "k8s-cloudwatch-adapter.selectorLabels" . | nindent 8 }}
+      {{- if .Values.podLabels }}
+        {{- toYaml .Values.podLabels | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ template "k8s-cloudwatch-adapter.serviceAccountName" . }}
+      securityContext:
+        fsGroup: 65534
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets: {{ toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
+      containers:
+      - name: {{ include "k8s-cloudwatch-adapter.fullname" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        args:
+        - /adapter
+        {{- range $key, $val := .Values.args }}
+        - --{{ $key }}={{ $val }}
+        {{- end }}
+        ports:
+        - containerPort: 6443
+          name: https
+        - containerPort: 8080
+          name: http
+        volumeMounts:
+        - mountPath: /tmp
+          name: temp-vol
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+      volumes:
+      - name: temp-vol
+        emptyDir: {}
