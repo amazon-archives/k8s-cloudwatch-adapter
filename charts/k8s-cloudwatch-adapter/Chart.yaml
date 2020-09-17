@@ -3,4 +3,4 @@ name: k8s-cloudwatch-adapter
 description: Helm chart for Kubernetes metrics adapter for Amazon CloudWatch
 type: application
 version: 0.2.0
-appVersion: 0.9.0
+appVersion: 0.10.0
