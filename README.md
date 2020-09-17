@@ -19,7 +19,7 @@ This adapter allows you to scale your Kubernetes deployment using the [Horizonta
 Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) (HPA) with
 metrics from AWS CloudWatch.
 
-## Prerequsites
+## Prerequisites
 This adapter requires the following permissions to access metric data from Amazon CloudWatch.
 - cloudwatch:GetMetricData
 
@@ -97,7 +97,11 @@ $ kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1" | jq .
 
 ## Deploying the sample application
 There is a sample SQS application provided in this repository for you to test how the adapter works.
-Refer to this [guide](samples/sqs/README.md)
+Refer to this [guide](samples/sqs/README.md).
+
+## More docs
+- [Configuring cross account metric example](docs/cross-account.md)
+- [ExternalMetric CRD schema](docs/schema.md)
 
 ## License
 

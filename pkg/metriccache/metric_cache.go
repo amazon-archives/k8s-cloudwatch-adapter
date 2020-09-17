@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/aws/aws-sdk-go/service/cloudwatch"
+	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/apis/metrics/v1alpha1"
+
 	"k8s.io/klog"
 )
 
@@ -32,19 +33,19 @@ func (mc *MetricCache) Update(key string, name string, metricRequest interface{}
 	mc.metricNames[key] = name
 }
 
-// GetCloudWatchRequest retrieves a metric request from the cache
-func (mc *MetricCache) GetCloudWatchRequest(namepace, name string) (cloudwatch.GetMetricDataInput, bool) {
+// GetExternalMetric retrieves an external metric request from the cache
+func (mc *MetricCache) GetExternalMetric(namespace, name string) (v1alpha1.ExternalMetric, bool) {
 	mc.metricMutex.RLock()
 	defer mc.metricMutex.RUnlock()
 
-	key := externalMetricKey(namepace, name)
+	key := externalMetricKey(namespace, name)
 	metricRequest, exists := mc.metricRequests[key]
 	if !exists {
 		klog.V(2).Infof("metric not found %s", key)
-		return cloudwatch.GetMetricDataInput{}, false
+		return v1alpha1.ExternalMetric{}, false
 	}
 
-	return metricRequest.(cloudwatch.GetMetricDataInput), true
+	return metricRequest.(v1alpha1.ExternalMetric), true
 }
 
 // Remove removes a metric request from the cache
