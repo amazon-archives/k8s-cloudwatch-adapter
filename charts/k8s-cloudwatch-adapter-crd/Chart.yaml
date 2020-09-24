@@ -2,5 +2,5 @@ apiVersion: v2
 name: k8s-cloudwatch-adapter-crd
 description: Helm chart for Kubernetes metrics adapter crd for Amazon CloudWatch
 type: application
-version: 0.1.0
+version: 0.1.1
 appVersion: 0.10.0
