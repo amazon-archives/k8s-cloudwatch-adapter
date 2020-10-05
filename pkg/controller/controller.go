@@ -29,7 +29,7 @@ func NewController(externalMetricInformer informers.ExternalMetricInformer, metr
 		metricHandler:        metricHandler,
 	}
 
-	// wire up enque step.  This provides a hook for testing enqueue step
+	// wire up enqueue step. This provides a hook for testing enqueue step
 	controller.enqueuer = controller.enqueueExternalMetric
 
 	klog.Info("Setting up external metric event handlers")
@@ -58,7 +58,7 @@ func (c *Controller) Run(numberOfWorkers int, interval time.Duration, stopCh <-c
 
 	// do the initial synchronization (one time) to populate resources
 	if !cache.WaitForCacheSync(stopCh, c.externalMetricSynced) {
-		runtime.HandleError(fmt.Errorf("Error syncing controller cache"))
+		runtime.HandleError(fmt.Errorf("error syncing controller cache"))
 		return
 	}
 
@@ -104,9 +104,9 @@ func (c *Controller) processNextItem() bool {
 
 	err := c.metricHandler.Process(queueItem)
 	if err != nil {
-		retrys := c.metricQueue.NumRequeues(rawItem)
-		if retrys < 5 {
-			klog.Errorf("Transient error with %d retrys for key %s: %s", retrys, rawItem, err)
+		retries := c.metricQueue.NumRequeues(rawItem)
+		if retries < 5 {
+			klog.Errorf("Transient error with %d retries for key %s: %s", retries, rawItem, err)
 			c.metricQueue.AddRateLimited(rawItem)
 			return true
 		}

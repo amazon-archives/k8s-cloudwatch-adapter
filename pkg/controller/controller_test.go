@@ -217,6 +217,7 @@ func newController(config controllerConfig) (*Controller, informers.SharedInform
 }
 
 func newExternalMetric() *api.ExternalMetric {
+	returnDataTrue := true
 	return &api.ExternalMetric{
 		TypeMeta: metav1.TypeMeta{APIVersion: api.SchemeGroupVersion.String(), Kind: "ExternalMetric"},
 		ObjectMeta: metav1.ObjectMeta{
@@ -240,7 +241,7 @@ func newExternalMetric() *api.ExternalMetric {
 					Stat:   "Average",
 					Unit:   "Count",
 				},
-				ReturnData: true,
+				ReturnData: &returnDataTrue,
 			}},
 		},
 	}

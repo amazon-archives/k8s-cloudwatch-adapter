@@ -7,7 +7,7 @@ configuration and HPA.
 Both the producer and consumer will use an Amazon SQS queue named `helloworld`. This queue will be
 created by the producer if it does not exist.
 
-## Prerequsites
+## Prerequisites
 
 Before starting, you need to first grant permissions to your Kubernetes worker nodes to interact
 with Amazon SQS queues. For simplicity, we will allow all SQS actions here, please do not do so on a
@@ -47,7 +47,7 @@ will tell the adapter how to retrieve metric data from Amazon CloudWatch. Here i
 `deploy/externalmetric.yaml` defined the query parameters used to retrieve the
 `ApproximateNumberOfMessagesVisible` for a SQS queue named `helloworld`. For details about how
 metric data query works, please refer to [CloudWatch GetMetricData
-API](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricData.html)
+API](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricData.html).
 
 ```yaml
 apiVersion: metrics.aws/v1alpha1
@@ -56,8 +56,6 @@ metadata:
   name: hello-queue-length
 spec:
   name: hello-queue-length
-  resource:
-    resource: "deployment"
   queries:
     - id: sqs_helloworld
       metricStat:
@@ -85,7 +83,7 @@ $ kubectl apply -f deploy/hpa.yaml
 
 ## Generate load using producer
 
-Finally we can start generating messages to the queue.
+Finally, we can start generating messages to the queue.
 
 ```bash
 $ make producer

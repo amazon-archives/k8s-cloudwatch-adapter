@@ -4,8 +4,6 @@ metadata:
   name: sqs-helloworld-length
 spec:
   name: sqs-helloworld-length
-  resource:
-    resource: "deployment"
   queries:
     - id: sqs_helloworld_length
       metricStat:

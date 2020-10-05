@@ -19,7 +19,7 @@ This adapter allows you to scale your Kubernetes deployment using the [Horizonta
 Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) (HPA) with
 metrics from AWS CloudWatch.
 
-## Prerequsites
+## Prerequisites
 This adapter requires the following permissions to access metric data from Amazon CloudWatch.
 - cloudwatch:GetMetricData
 
@@ -67,9 +67,16 @@ clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:crd-metrics-
 This creates a new namespace `custom-metrics` and deploys the necessary ClusterRole, Service Account,
 Role Binding, along with the deployment of the adapter.
 
-Alternatively the adapter can be deployed using the Helm chart in the `/charts` directory:
+Alternatively the crd and adapter can be deployed using the Helm chart in the `/charts` directory:
 
 ```bash
+$ helm install k8s-cloudwatch-adapter-crd ./charts/k8s-cloudwatch-adapter-crd
+NAME: k8s-cloudwatch-adapter-crd
+LAST DEPLOYED: Thu Sep 17 11:36:53 2020
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
 $ helm install k8s-cloudwatch-adapter ./charts/k8s-cloudwatch-adapter \
 >   --namespace custom-metrics \
 >   --create-namespace
@@ -97,7 +104,11 @@ $ kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1" | jq .
 
 ## Deploying the sample application
 There is a sample SQS application provided in this repository for you to test how the adapter works.
-Refer to this [guide](samples/sqs/README.md)
+Refer to this [guide](samples/sqs/README.md).
+
+## More docs
+- [Configuring cross account metric example](docs/cross-account.md)
+- [ExternalMetric CRD schema](docs/schema.md)
 
 ## License
 
