@@ -77,9 +77,10 @@ NAMESPACE: default
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
+
 $ helm install k8s-cloudwatch-adapter ./charts/k8s-cloudwatch-adapter \
->   --namespace custom-metrics \
->   --create-namespace
+    --namespace custom-metrics \
+    --create-namespace
 NAME: k8s-cloudwatch-adapter
 LAST DEPLOYED: Fri Aug 14 13:20:17 2020
 NAMESPACE: custom-metrics
