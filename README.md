@@ -13,11 +13,11 @@ pulls](https://shields.beevelop.com/docker/pulls/chankh/k8s-cloudwatch-adapter.s
 
 An implementation of the Kubernetes [Custom Metrics API and External Metrics
 API](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-metrics-apis)
-for AWS CloudWatch metrics.
+for Amazoon CloudWatch metrics.
 
 This adapter allows you to scale your Kubernetes deployment using the [Horizontal Pod
 Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) (HPA) with
-metrics from AWS CloudWatch.
+metrics from Amazon CloudWatch.
 
 ## Prerequisites
 This adapter requires the following permissions to access metric data from Amazon CloudWatch.
