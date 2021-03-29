@@ -18,8 +18,13 @@ func GetLocalRegion() string {
 		klog.Errorf("unable to get current region information, %v", err)
 		return ""
 	}
-
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		klog.Errorf("unable to get current region information, status code %v", resp.StatusCode)
+		return ""
+	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		klog.Errorf("cannot read response from instance metadata, %v", err)
