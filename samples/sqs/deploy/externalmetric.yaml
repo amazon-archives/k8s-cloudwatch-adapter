@@ -4,8 +4,6 @@ metadata:
   name: sqs-helloworld-length
 spec:
   name: sqs-helloworld-length
-  resource:
-    resource: "deployment"
   queries:
     - id: sqs_helloworld_length
       metricStat:
@@ -15,7 +13,7 @@ spec:
           dimensions:
             - name: QueueName
               value: "helloworld"
-        period: 300
+        period: 60
         stat: Average
         unit: Count
       returnData: true

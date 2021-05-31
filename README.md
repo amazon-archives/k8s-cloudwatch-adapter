@@ -19,14 +19,12 @@ This adapter allows you to scale your Kubernetes deployment using the [Horizonta
 Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) (HPA) with
 metrics from AWS CloudWatch.
 
-## Prerequsites
+## Prerequisites
 This adapter requires the following permissions to access metric data from Amazon CloudWatch.
 - cloudwatch:GetMetricData
-- cloudwatch:GetMetricStatistics
-- cloudwatch:ListMetrics
 
-You can create an IAM policy using this template, and attach it to the role if you are using
-[kube2iam](https://github.com/jtblin/kube2iam). 
+You can create an IAM policy using this template, and attach it to the [Service Account Role](https://docs.aws.amazon.com/eks/latest/userguide/specify-service-account-role.html) if you are using
+[IAM Roles for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
 
 ```json
 {
@@ -35,9 +33,7 @@ You can create an IAM policy using this template, and attach it to the role if y
         {
             "Effect": "Allow",
             "Action": [
-                "cloudwatch:GetMetricData",
-                "cloudwatch:GetMetricStatistics",
-                "cloudwatch:ListMetrics"
+                "cloudwatch:GetMetricData"
             ],
             "Resource": "*"
         }
@@ -48,23 +44,20 @@ You can create an IAM policy using this template, and attach it to the role if y
 ## Deploy
 Requires a Kubernetes cluster with Metric Server deployed, Amazon EKS cluster is fine too.
 
-Now deploy the adapter to your Kubernetes cluster.
+Now deploy the adapter to your Kubernetes cluster:
 
 ```bash
 $ kubectl apply -f https://raw.githubusercontent.com/awslabs/k8s-cloudwatch-adapter/master/deploy/adapter.yaml
 namespace/custom-metrics created
 clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:system:auth-delegator created
 rolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter-auth-reader created
-deployment.apps/k8s-cloudwatch-adapter configured
+deployment.apps/k8s-cloudwatch-adapter created
 clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter-resource-reader created
 serviceaccount/k8s-cloudwatch-adapter created
 service/k8s-cloudwatch-adapter created
-apiservice.apiregistration.k8s.io/v1beta1.custom.metrics.k8s.io created
 apiservice.apiregistration.k8s.io/v1beta1.external.metrics.k8s.io created
-clusterrole.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:custom-metrics-reader created
 clusterrole.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:external-metrics-reader created
 clusterrole.rbac.authorization.k8s.io/k8s-cloudwatch-adapter-resource-reader created
-clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:custom-metrics-reader created
 clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:external-metrics-reader created
 customresourcedefinition.apiextensions.k8s.io/externalmetrics.metrics.aws created
 clusterrole.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:crd-metrics-reader created
@@ -73,6 +66,27 @@ clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:crd-metrics-
 
 This creates a new namespace `custom-metrics` and deploys the necessary ClusterRole, Service Account,
 Role Binding, along with the deployment of the adapter.
+
+Alternatively the crd and adapter can be deployed using the Helm chart in the `/charts` directory:
+
+```bash
+$ helm install k8s-cloudwatch-adapter-crd ./charts/k8s-cloudwatch-adapter-crd
+NAME: k8s-cloudwatch-adapter-crd
+LAST DEPLOYED: Thu Sep 17 11:36:53 2020
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+$ helm install k8s-cloudwatch-adapter ./charts/k8s-cloudwatch-adapter \
+>   --namespace custom-metrics \
+>   --create-namespace
+NAME: k8s-cloudwatch-adapter
+LAST DEPLOYED: Fri Aug 14 13:20:17 2020
+NAMESPACE: custom-metrics
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
 
 ### Verifying the deployment
 Next you can query the APIs to see if the adapter is deployed correctly by running:
@@ -90,11 +104,15 @@ $ kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1" | jq .
 
 ## Deploying the sample application
 There is a sample SQS application provided in this repository for you to test how the adapter works.
-Refer to this [guide](samples/sqs/README.md)
+Refer to this [guide](samples/sqs/README.md).
+
+## More docs
+- [Configuring cross account metric example](docs/cross-account.md)
+- [ExternalMetric CRD schema](docs/schema.md)
 
 ## License
 
-This library is licensed under the Apache 2.0 License. 
+This library is licensed under the Apache 2.0 License.
 
 ## Issues
 Report any issues in the [Github Issues](https://github.com/awslabs/k8s-cloudwatch-adapter/issues)

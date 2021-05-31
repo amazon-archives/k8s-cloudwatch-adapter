@@ -21,12 +21,12 @@ func (p *cloudwatchProvider) GetExternalMetric(namespace string, metricSelector 
 		return nil, errors.NewBadRequest("label is set to not selectable. this should not happen")
 	}
 
-	cwRequest, found := p.metricCache.GetCloudWatchRequest(namespace, info.Metric)
+	externalRequest, found := p.metricCache.GetExternalMetric(namespace, info.Metric)
 	if !found {
 		return nil, errors.NewBadRequest("no metric query found")
 	}
 
-	metricValue, err := p.cwClient.QueryCloudWatch(cwRequest)
+	metricValue, err := p.cwManager.QueryCloudWatch(externalRequest)
 	if err != nil {
 		klog.Errorf("bad request: %v", err)
 		return nil, errors.NewBadRequest(err.Error())
@@ -38,14 +38,13 @@ func (p *cloudwatchProvider) GetExternalMetric(namespace string, metricSelector 
 	} else {
 		quantity = *resource.NewQuantity(int64(metricValue[0].Values[0]), resource.DecimalSI)
 	}
-	externalmetric := external_metrics.ExternalMetricValue{
+	externalMetricValue := external_metrics.ExternalMetricValue{
 		MetricName: info.Metric,
 		Value:      quantity,
 		Timestamp:  metav1.Now(),
 	}
 
-	matchingMetrics := []external_metrics.ExternalMetricValue{}
-	matchingMetrics = append(matchingMetrics, externalmetric)
+	matchingMetrics := []external_metrics.ExternalMetricValue{externalMetricValue}
 
 	return &external_metrics.ExternalMetricValueList{
 		Items: matchingMetrics,
@@ -57,7 +56,7 @@ func (p *cloudwatchProvider) ListAllExternalMetrics() []provider.ExternalMetricI
 	defer p.valuesLock.RUnlock()
 
 	// not implemented yet
-	externalMetricsInfo := []provider.ExternalMetricInfo{}
+	var externalMetricsInfo []provider.ExternalMetricInfo
 	for _, name := range p.metricCache.ListMetricNames() {
 		// only process if name is non-empty
 		if name != "" {

@@ -1,15 +1,12 @@
 package aws
 
 import (
-	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
-	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/config"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
+	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/apis/metrics/v1alpha1"
 )
 
-// Client represents a client for Amazon CloudWatch.
-type Client interface {
-	// Query sends a list of queries to Cloudwatch for metric results.
-	Query(queries []config.MetricDataQuery) ([]cloudwatch.MetricDataResult, error)
-
+// CloudWatchManager manages clients for Amazon CloudWatch.
+type CloudWatchManager interface {
 	// Query sends a CloudWatch GetMetricDataInput to CloudWatch API for metric results.
-	QueryCloudWatch(query cloudwatch.GetMetricDataInput) ([]cloudwatch.MetricDataResult, error)
+	QueryCloudWatch(request v1alpha1.ExternalMetric) ([]types.MetricDataResult, error)
 }

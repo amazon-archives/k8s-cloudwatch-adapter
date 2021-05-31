@@ -49,15 +49,17 @@ spec:
       name: k8s-cloudwatch-adapter
     spec:
       serviceAccountName: k8s-cloudwatch-adapter
+      securityContext:
+        fsGroup: 65534
       containers:
       - name: k8s-cloudwatch-adapter
-        image: chankh/k8s-cloudwatch-adapter:v0.7.0
+        image: chankh/k8s-cloudwatch-adapter:v0.10.0
         args:
         - /adapter
         - --cert-dir=/tmp
         - --secure-port=6443
         - --logtostderr=true
-        - --v=10
+        - --v=2
         ports:
         - containerPort: 6443
           name: https
@@ -140,22 +142,10 @@ rules:
   - namespaces
   - pods
   - services
+  - configmaps
   verbs:
   - get
   - list
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: k8s-cloudwatch-adapter:custom-metrics-reader
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: k8s-cloudwatch-adapter:custom-metrics-reader
-subjects:
-- kind: ServiceAccount
-  name: horizontal-pod-autoscaler
-  namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

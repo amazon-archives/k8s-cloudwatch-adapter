@@ -1,24 +1,39 @@
 language: go
 
+dist: bionic
+
+env:
+  - DOCKER_CLI_EXPERIMENTAL=enabled
+
 go:
-- "1.13.x"
+  - "1.14.x"
 
 # Only clone the most recent commit.
 git:
   depth: 1
 
-script: make docker-build
-
 sudo: required
 services:
-- docker
+  - docker
 
-deploy:
-- provider: script
-  script: bash .travis-push.sh
-  on:
-    branch: master
-- provider: script
-  script: bash .travis-push.sh
-  on:
-    tags: true
+before_install:
+  - sudo rm -rf /var/lib/apt/lists/*
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - lsb_release -cs
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) edge"
+  - sudo apt-get update
+  - sudo apt purge --auto-remove qemu-user qemu-user-binfmt binfmt-support
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce qemu-user-static
+  - mkdir -vp ~/.docker/cli-plugins/
+  - curl --silent -L "https://github.com/docker/buildx/releases/download/v0.3.0/buildx-v0.3.0.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+  - chmod a+x ~/.docker/cli-plugins/docker-buildx
+  - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+script:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker version
+  - docker buildx version
+  - docker buildx ls
+  - docker buildx create --name builder --driver docker-container --use
+  - docker buildx inspect --bootstrap
+  - 'if [ "$TRAVIS_PULL_REQUEST" != false ]; then make docker; else travis_wait make docker-multiarch TRAVIS_TAG=$TRAVIS_TAG; fi'

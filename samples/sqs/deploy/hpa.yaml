@@ -13,5 +13,4 @@ spec:
   - type: External
     external:
       metricName: sqs-helloworld-length
-      targetValue: 30
-
+      targetAverageValue: 30

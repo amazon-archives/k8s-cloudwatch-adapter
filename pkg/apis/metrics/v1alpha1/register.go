@@ -1,11 +1,11 @@
 package v1alpha1
 
 import (
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/apis/metrics"
+	externalmetric "github.com/awslabs/k8s-cloudwatch-adapter/pkg/apis/metrics"
 )
 
 // SchemeGroupVersion is the group version used to register these objects
@@ -34,6 +34,6 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 	)
 
 	// register the type in the scheme
-	meta_v1.AddToGroupVersion(scheme, SchemeGroupVersion)
+	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil
 }

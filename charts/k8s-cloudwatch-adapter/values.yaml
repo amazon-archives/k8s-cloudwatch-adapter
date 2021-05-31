@@ -1,0 +1,56 @@
+image:
+  pullPolicy: IfNotPresent
+  repository: chankh/k8s-cloudwatch-adapter
+  tag: "v0.10.0"
+
+## Optional array of imagePullSecrets containing private registry credentials
+## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+# - name: secretName
+
+serviceAccount:
+  create: true
+  name:
+  irsaIamRole: "" # e.g. "arn:aws:iam::012345678901:role/role-name"
+
+## Runtime arguments
+args:
+  cert-dir: /tmp
+  secure-port: 6443
+  logtostderr: true
+  v: 2
+
+replicaCount: 1
+
+## Labels to be added to the adapter Deployment
+##
+labels: {}
+
+## Annotations to be added to the adapter pods
+##
+podAnnotations: {}
+
+## Labels to be added to the adapter pods
+##
+podLabels: {}
+
+## Provide a priority class name the Deployment
+##
+priorityClassName: ""
+
+service:
+  ## Labels to be added to the adapter Service
+  ##
+  labels: {}
+
+  ## Annotations to be added to the adapter Service
+  ##
+  annotations: {}
+
+resources:
+  limits:
+    cpu: 1
+    memory: 256Mi
+  requests:
+    cpu: 1
+    memory: 256Mi

@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/aws/aws-sdk-go-v2/aws/external"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/aws"
 )
@@ -15,7 +15,7 @@ func main() {
 	// Using the SDK's default configuration, loading additional config
 	// and credentials values from the environment variables, shared
 	// credentials, and shared configuration files
-	cfg, err := external.LoadDefaultAWSConfig()
+	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		panic("unable to load SDK config, " + err.Error())
 	}
@@ -25,7 +25,7 @@ func main() {
 	}
 	fmt.Println("using AWS Region:", cfg.Region)
 
-	svc := sqs.New(cfg)
+	svc := sqs.NewFromConfig(cfg)
 
 	// Initialize and create a Service Bus Queue named helloworld if it doesn't exist
 	queueName := os.Getenv("QUEUE")
@@ -35,9 +35,9 @@ func main() {
 	message := "Hello SQS."
 	fmt.Println("creating queue: ", queueName)
 
-	q, err := svc.CreateQueueRequest(&sqs.CreateQueueInput{
+	q, err := svc.CreateQueue(context.Background(), &sqs.CreateQueueInput{
 		QueueName: &queueName,
-	}).Send(context.Background())
+	})
 	if err != nil {
 		// handle queue creation error
 		fmt.Println("create queue: ", err)
@@ -53,10 +53,10 @@ func main() {
 
 	for i := 1; i < 20000; i++ {
 		fmt.Println("sending message ", i)
-		result, err := svc.SendMessageRequest(&sqs.SendMessageInput{
+		result, err := svc.SendMessage(context.Background(), &sqs.SendMessageInput{
 			MessageBody: &message,
 			QueueUrl:    q.QueueUrl,
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			fmt.Println("Error", err)

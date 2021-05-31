@@ -6,88 +6,64 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/aws/external"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
-	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/config"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
+
+	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/apis/metrics/v1alpha1"
+
 	"k8s.io/klog"
 )
 
-// NewCloudWatchClient creates a new CloudWatch client.
-func NewCloudWatchClient() Client {
+func NewCloudWatchManager() CloudWatchManager {
+	return &cloudwatchManager{
+		localRegion: GetLocalRegion(),
+	}
+}
+
+type cloudwatchManager struct {
+	localRegion string
+}
+
+func (c *cloudwatchManager) getClient(role, region *string) *cloudwatch.Client {
+	// check if region is set
+	usedRegion := c.localRegion
+	if region != nil {
+		usedRegion = *region
+	}
+
 	// Using the SDK's default configuration, loading additional config
 	// and credentials values from the environment variables, shared
 	// credentials, and shared configuration files
-	cfg, err := external.LoadDefaultAWSConfig()
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(usedRegion))
 	if err != nil {
 		panic("unable to load SDK config, " + err.Error())
 	}
 
-	// check if region is set
-	if cfg.Region == "" {
-		cfg.Region = GetLocalRegion()
-	}
 	klog.Infof("using AWS Region: %s", cfg.Region)
 
+	// check if roleARN is passed
+	if role != nil {
+		client := sts.NewFromConfig(cfg)
+		provider := stscreds.NewAssumeRoleProvider(client, *role)
+		cfg.Credentials = aws.NewCredentialsCache(provider)
+		klog.Infof("using IAM role ARN: %s", *role)
+	}
+
 	if os.Getenv("DEBUG") == "true" {
-		cfg.LogLevel = aws.LogDebugWithHTTPBody
+		cfg.ClientLogMode = aws.LogRequestWithBody | aws.LogResponseWithBody
 	}
 
-	// Using the Config value, create the CloudWatch client
-	svc := cloudwatch.New(cfg)
-	return &cloudwatchClient{client: svc}
+	client := cloudwatch.NewFromConfig(cfg)
+	return client
 }
 
-type cloudwatchClient struct {
-	client *cloudwatch.Client
-}
-
-func (c *cloudwatchClient) Query(queries []config.MetricDataQuery) ([]cloudwatch.MetricDataResult, error) {
-	// If changing logic in this function ensure changes are duplicated in
-	// `pkg/controller.handleExternalMetric()`
-	cwMetricQueries := make([]cloudwatch.MetricDataQuery, len(queries))
-	for i, q := range queries {
-		q := q
-		mdq := cloudwatch.MetricDataQuery{
-			Id:         &q.ID,
-			Label:      &q.Label,
-			ReturnData: &q.ReturnData,
-		}
-
-		if len(q.Expression) == 0 {
-			dimensions := make([]cloudwatch.Dimension, len(q.MetricStat.Metric.Dimensions))
-			for j, d := range q.MetricStat.Metric.Dimensions {
-				dimensions[j] = cloudwatch.Dimension{
-					Name:  &d.Name,
-					Value: &d.Value,
-				}
-			}
-
-			metric := &cloudwatch.Metric{
-				Dimensions: dimensions,
-				MetricName: &q.MetricStat.Metric.MetricName,
-				Namespace:  &q.MetricStat.Metric.Namespace,
-			}
-
-			mdq.MetricStat = &cloudwatch.MetricStat{
-				Metric: metric,
-				Period: &q.MetricStat.Period,
-				Stat:   &q.MetricStat.Stat,
-				Unit:   cloudwatch.StandardUnit(q.MetricStat.Unit),
-			}
-		} else {
-			mdq.Expression = &q.Expression
-		}
-
-		cwMetricQueries[i] = mdq
-	}
-	cwQuery := cloudwatch.GetMetricDataInput{
-		MetricDataQueries: cwMetricQueries,
-	}
-
-	return c.QueryCloudWatch(cwQuery)
-}
-
-func (c *cloudwatchClient) QueryCloudWatch(cwQuery cloudwatch.GetMetricDataInput) ([]cloudwatch.MetricDataResult, error) {
+func (c *cloudwatchManager) QueryCloudWatch(request v1alpha1.ExternalMetric) ([]types.MetricDataResult, error) {
+	role := request.Spec.RoleARN
+	region := request.Spec.Region
+	cwQuery := toCloudWatchQuery(&request)
 	now := time.Now()
 	endTime := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), 0, 0, now.Location())
 	// CloudWatch metrics have latency, we will grab in a 5 minute window and extract the latest value
@@ -95,13 +71,14 @@ func (c *cloudwatchClient) QueryCloudWatch(cwQuery cloudwatch.GetMetricDataInput
 
 	cwQuery.EndTime = &endTime
 	cwQuery.StartTime = &startTime
-	cwQuery.ScanBy = "TimestampDescending"
+	cwQuery.ScanBy = types.ScanByTimestampDescending
 
-	results, err := c.client.GetMetricDataRequest(&cwQuery).Send(context.Background())
+	getMetricDataOutput, err := c.getClient(role, region).GetMetricData(context.Background(), &cwQuery)
+
 	if err != nil {
 		klog.Errorf("err: %v", err)
-		return []cloudwatch.MetricDataResult{}, err
+		return []types.MetricDataResult{}, err
 	}
 
-	return results.MetricDataResults, nil
+	return getMetricDataOutput.MetricDataResults, nil
 }

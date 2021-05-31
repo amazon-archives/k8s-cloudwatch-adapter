@@ -1,39 +1,42 @@
 REGISTRY?=chankh
 IMAGE?=k8s-cloudwatch-adapter
 TEMP_DIR:=$(shell mktemp -d /tmp/$(IMAGE).XXXXXX)
+ARCH?=amd64
+PLATFORMS=linux/arm64/v8,linux/amd64
 OUT_DIR?=./_output
 VENDOR_DOCKERIZED?=0
+GIT_HASH?=$(shell git rev-parse --short HEAD)
+TAG:=$(or ${TRAVIS_TAG},${TRAVIS_TAG},latest)
+GOIMAGE=golang:1.14
+GOFLAGS=-mod=vendor -tags=netgo
+SRC:=$(shell find pkg cmd -type f -name "*.go")
 
-VERSION?=latest
-GOIMAGE=golang:1.13
-GOFLAGS="-mod=vendor -tags=netgo"
+.PHONY: all docker-build build docker docker-multiarch push test
 
-.PHONY: all docker-build push test build-local-image
+all: verify-apis test $(OUT_DIR)/$(ARCH)/adapter
 
-all: test $(OUT_DIR)/adapter
-
-src_deps=$(shell find pkg cmd -type f -name "*.go")
-$(OUT_DIR)/adapter: $(src_deps)
+$(OUT_DIR)/%/adapter: $(SRC)
 	CGO_ENABLED=0 GOARCH=$* go build $(GOFLAGS) -o $(OUT_DIR)/$*/adapter cmd/adapter/adapter.go
 
 docker-build: verify-apis test
 	cp deploy/Dockerfile $(TEMP_DIR)/Dockerfile
 
-	docker run -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/awslabs/k8s-cloudwatch-adapter -e GOARCH=amd64 -e GOFLAGS=$(GOFLAGS) -w /go/src/github.com/awslabs/k8s-cloudwatch-adapter $(GOIMAGE) /bin/bash -c "\
+	docker run --rm -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/awslabs/k8s-cloudwatch-adapter -e GOARCH=$(ARCH) -e GOFLAGS="$(GOFLAGS)" -w /go/src/github.com/awslabs/k8s-cloudwatch-adapter $(GOIMAGE) /bin/bash -c "\
 		CGO_ENABLED=0 GO111MODULE=on go build -o /build/adapter cmd/adapter/adapter.go"
 
 	docker build -t $(REGISTRY)/$(IMAGE):$(VERSION) $(TEMP_DIR)
 	rm -rf $(TEMP_DIR)
 
-build-local-image: $(OUT_DIR)/$(ARCH)/adapter
-	sed "s|BASEIMAGE|scratch|g" deploy/Dockerfile > $(TEMP_DIR)/Dockerfile
-	cp  $(OUT_DIR)/$(ARCH)/adapter $(TEMP_DIR)
-	cd $(TEMP_DIR)
-	docker build -t $(REGISTRY)/$(IMAGE):$(VERSION) $(TEMP_DIR)
-	rm -rf $(TEMP_DIR)
+build: $(OUT_DIR)/$(ARCH)/adapter
 
-push:
-	docker push $(REGISTRY)/$(IMAGE):$(VERSION)
+docker: verify-apis test
+	docker build --pull -t $(REGISTRY)/$(IMAGE):$(TAG) .
+
+docker-multiarch: verify-apis test
+	docker buildx build --pull --push --platform $(PLATFORMS) --tag $(REGISTRY)/$(IMAGE):$(TAG) .
+
+push: docker
+	docker push $(REGISTRY)/$(IMAGE):$(TAG)
 
 vendor: go.mod
 ifeq ($(VENDOR_DOCKERIZED),1)
@@ -44,7 +47,7 @@ else
 endif
 
 test:
-	CGO_ENABLED=0 GO111MODULE=on go test ./pkg/...
+	CGO_ENABLED=0 GO111MODULE=on go test -cover ./pkg/...
 
 clean:
 	rm -rf ${OUT_DIR} vendor
