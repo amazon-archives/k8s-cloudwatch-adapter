@@ -1,32 +1,34 @@
 package aws
 
 import (
-	"io/ioutil"
-	"net/http"
+	"context"
 
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/apis/metrics/v1alpha1"
+
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/ec2/imds"
 
 	"k8s.io/klog"
 )
 
 // GetLocalRegion gets the region ID from the instance metadata.
 func GetLocalRegion() string {
-	resp, err := http.Get("http://169.254.169.254/latest/meta-data/placement/availability-zone/")
+	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
-		klog.Errorf("unable to get current region information, %v", err)
+		klog.Errorf("error: %v", err)
 		return ""
 	}
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	client := imds.NewFromConfig(cfg)
+	region, err := client.GetRegion(context.TODO(), &imds.GetRegionInput{})
 	if err != nil {
-		klog.Errorf("cannot read response from instance metadata, %v", err)
+		klog.Errorf("Unable to retrieve the region from the EC2 instance %v\n", err)
+		return ""
 	}
 
-	// strip the last character from AZ to get region ID
-	return string(body[0 : len(body)-1])
+	return region.Region
 }
 
 func toCloudWatchQuery(externalMetric *v1alpha1.ExternalMetric) cloudwatch.GetMetricDataInput {
