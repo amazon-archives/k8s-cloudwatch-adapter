@@ -8,6 +8,8 @@ layers](https://shields.beevelop.com/docker/image/layers/chankh/k8s-cloudwatch-a
 [![image
 pulls](https://shields.beevelop.com/docker/pulls/chankh/k8s-cloudwatch-adapter.svg)](https://hub.docker.com/r/chankh/k8s-cloudwatch-adapter)
 
+> Attention! This project has been archived and is no longer being worked on. If you are looking for a metrics server that can consume metrics from CloudWatch, please consider using the [KEDA](https://keda.sh) project instead. KEDA is a Kubernetes-based Event Driven Autoscaler. With KEDA, you can drive the scaling of any container in Kubernetes based on the number of events needing to be processed. For an overview of KEDA, see [An overview of Kubernetes Event-Driven Autoscaling](https://youtu.be/H5eZEq_wqSE).
+
 # Kubernetes Custom Metrics Adapter for Kubernetes
 
 
