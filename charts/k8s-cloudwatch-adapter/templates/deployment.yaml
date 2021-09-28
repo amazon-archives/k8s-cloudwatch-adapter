@@ -44,6 +44,11 @@ spec:
         {{- range $key, $val := .Values.args }}
         - --{{ $key }}={{ $val }}
         {{- end }}
+        env:
+        {{- range $map := .Values.env }}
+          - name: {{ $map.name }}
+            value: {{ $map.value }}
+        {{- end }}
         ports:
         - containerPort: 6443
           name: https

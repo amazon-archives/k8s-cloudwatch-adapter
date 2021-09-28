@@ -20,6 +20,11 @@ args:
   logtostderr: true
   v: 2
 
+## Pod environment variables
+env:
+  # e.g. - name: AWS_REGION
+  # e.g.   value: eu-west-1
+
 replicaCount: 1
 
 ## Labels to be added to the adapter Deployment
