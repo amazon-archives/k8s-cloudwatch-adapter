@@ -20,6 +20,43 @@ func GetLocalRegion() string {
 	}
 
 	defer resp.Body.Close()
+
+    if resp.StatusCode == 401 {
+        client := &http.Client{}
+        req, err := http.NewRequest("PUT", "http://169.254.169.254/latest/api/token", http.NoBody)
+        if err != nil {
+            klog.Errorf("unable to get instance metadata token, %v", err)
+            return ""
+        }
+        req.Header.Add("X-aws-ec2-metadata-token-ttl-seconds", "21600")
+        metaResp, err := client.Do(req)
+        if err != nil {
+            klog.Errorf("unable to get instance metadata token, %v", err)
+            return ""
+        }
+        defer metaResp.Body.Close()
+
+        token, err := ioutil.ReadAll(metaResp.Body)
+        if err != nil {
+            klog.Errorf("cannot read response from instance metadata, %v", err)
+            return ""
+        }
+
+        req, err = http.NewRequest("GET", "http://169.254.169.254/latest/meta-data/placement/availability-zone/", http.NoBody)
+        if err != nil {
+            klog.Errorf("unable to get current region information, %v", err)
+            return ""
+        }
+        req.Header.Add("X-aws-ec2-metadata-token", string(token))
+
+        resp, err = client.Do(req);
+        if err != nil {
+            klog.Errorf("unable to get current region information, %v", err)
+            return ""
+        }
+        defer resp.Body.Close()
+    }
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		klog.Errorf("cannot read response from instance metadata, %v", err)
