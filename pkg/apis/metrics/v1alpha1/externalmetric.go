@@ -89,7 +89,7 @@ type MetricStat struct {
 	// The period to use when retrieving the metric.
 	//
 	// Period is a required field
-	Period int64 `json:"period"`
+	Period int32 `json:"period"`
 
 	// The statistic to return. It can include any CloudWatch statistic or extended
 	// statistic.

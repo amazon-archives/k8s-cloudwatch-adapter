@@ -5,15 +5,15 @@ import (
 	"os"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
-
-	"github.com/aws/aws-sdk-go/aws/endpoints"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 
 	"github.com/awslabs/k8s-cloudwatch-adapter/pkg/apis/metrics/v1alpha1"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"k8s.io/klog"
 )
 
@@ -27,39 +27,40 @@ type cloudwatchManager struct {
 	localRegion string
 }
 
-func (c *cloudwatchManager) getClient(role, region *string) *cloudwatch.CloudWatch {
-	// Using the Config value, create the CloudWatch client
-	sess := session.Must(session.NewSession())
+func (c *cloudwatchManager) getClient(role, region *string) *cloudwatch.Client {
+	// check if region is set
+	usedRegion := c.localRegion
+	if region != nil {
+		usedRegion = *region
+	}
 
 	// Using the SDK's default configuration, loading additional config
 	// and credentials values from the environment variables, shared
 	// credentials, and shared configuration files
-	cfg := aws.NewConfig().WithSTSRegionalEndpoint(endpoints.RegionalSTSEndpoint)
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(usedRegion))
+	if err != nil {
+		panic("unable to load SDK config, " + err.Error())
+	}
+
+	klog.Infof("using AWS Region: %s", cfg.Region)
 
 	// check if roleARN is passed
 	if role != nil {
-		creds := stscreds.NewCredentials(sess, *role)
-		cfg = cfg.WithCredentials(creds)
+		client := sts.NewFromConfig(cfg)
+		provider := stscreds.NewAssumeRoleProvider(client, *role)
+		cfg.Credentials = aws.NewCredentialsCache(provider)
 		klog.Infof("using IAM role ARN: %s", *role)
 	}
 
-	// check if region is set
-	if region != nil {
-		cfg = cfg.WithRegion(*region)
-	} else if aws.StringValue(cfg.Region) == "" {
-		cfg.Region = aws.String(c.localRegion)
-	}
-	klog.Infof("using AWS Region: %s", aws.StringValue(cfg.Region))
-
 	if os.Getenv("DEBUG") == "true" {
-		cfg = cfg.WithLogLevel(aws.LogDebugWithHTTPBody)
+		cfg.ClientLogMode = aws.LogRequestWithBody | aws.LogResponseWithBody
 	}
 
-	svc := cloudwatch.New(sess, cfg)
-	return svc
+	client := cloudwatch.NewFromConfig(cfg)
+	return client
 }
 
-func (c *cloudwatchManager) QueryCloudWatch(request v1alpha1.ExternalMetric) ([]*cloudwatch.MetricDataResult, error) {
+func (c *cloudwatchManager) QueryCloudWatch(request v1alpha1.ExternalMetric) ([]types.MetricDataResult, error) {
 	role := request.Spec.RoleARN
 	region := request.Spec.Region
 	cwQuery := toCloudWatchQuery(&request)
@@ -70,15 +71,14 @@ func (c *cloudwatchManager) QueryCloudWatch(request v1alpha1.ExternalMetric) ([]
 
 	cwQuery.EndTime = &endTime
 	cwQuery.StartTime = &startTime
-	cwQuery.ScanBy = aws.String("TimestampDescending")
+	cwQuery.ScanBy = types.ScanByTimestampDescending
 
-	req, resp := c.getClient(role, region).GetMetricDataRequest(&cwQuery)
-	req.SetContext(context.Background())
+	getMetricDataOutput, err := c.getClient(role, region).GetMetricData(context.Background(), &cwQuery)
 
-	if err := req.Send(); err != nil {
+	if err != nil {
 		klog.Errorf("err: %v", err)
-		return []*cloudwatch.MetricDataResult{}, err
+		return []types.MetricDataResult{}, err
 	}
 
-	return resp.MetricDataResults, nil
+	return getMetricDataOutput.MetricDataResults, nil
 }

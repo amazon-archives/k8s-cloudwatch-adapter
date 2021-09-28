@@ -5,7 +5,6 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/aws/aws-sdk-go/aws"
 	api "github.com/awslabs/k8s-cloudwatch-adapter/pkg/apis/metrics/v1alpha1"
 )
 
@@ -69,7 +68,7 @@ func TestToCloudWatchQuery(t *testing.T) {
 				t.Errorf("metricRequest Stat = %v, want %v", *qStat.Stat, wantStat.Stat)
 			}
 
-			if aws.StringValue(qStat.Unit) != wantStat.Unit {
+			if string(qStat.Unit) != wantStat.Unit {
 				t.Errorf("metricRequest Unit = %v, want %v", qStat.Unit, wantStat.Unit)
 			}
 		}

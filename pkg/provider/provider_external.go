@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/kubernetes-incubator/custom-metrics-apiserver/pkg/provider"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -37,7 +36,7 @@ func (p *cloudwatchProvider) GetExternalMetric(namespace string, metricSelector 
 	if len(metricValue) == 0 || len(metricValue[0].Values) == 0 {
 		quantity = *resource.NewMilliQuantity(0, resource.DecimalSI)
 	} else {
-		quantity = *resource.NewQuantity(int64(aws.Float64Value(metricValue[0].Values[0])), resource.DecimalSI)
+		quantity = *resource.NewQuantity(int64(metricValue[0].Values[0]), resource.DecimalSI)
 	}
 	externalMetricValue := external_metrics.ExternalMetricValue{
 		MetricName: info.Metric,
