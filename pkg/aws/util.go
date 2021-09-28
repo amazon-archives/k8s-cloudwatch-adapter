@@ -3,6 +3,7 @@ package aws
 import (
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
@@ -11,8 +12,14 @@ import (
 	"k8s.io/klog"
 )
 
-// GetLocalRegion gets the region ID from the instance metadata.
+// GetLocalRegion gets the region ID from the standard environment variables or instance metadata.
 func GetLocalRegion() string {
+	if mp := os.Getenv("AWS_DEFAULT_REGION"); mp != "" {
+		return mp
+	}
+	if mp := os.Getenv("AWS_REGION"); mp != "" {
+		return mp
+	}
 	resp, err := http.Get("http://169.254.169.254/latest/meta-data/placement/availability-zone/")
 	if err != nil {
 		klog.Errorf("unable to get current region information, %v", err)
